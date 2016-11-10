@@ -1,0 +1,12 @@
+.application-path {
+    font-size: 11px;
+}
+
+.application-name {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.applications-list {
+    background: white;
+}

@@ -1,0 +1,3 @@
+| Application name | Icon name | Desktop file name | Original icon | Theme |
+| --- | :-- | :-- | :-- | :-- |
+| {app.name} | `{app.icon}` | `{app.desktop}` | | {theme} |
