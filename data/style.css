@@ -2,9 +2,14 @@
     font-size: 11px;
 }
 
+.application-label{
+  font-size: 11px;
+  font-style: italic;
+}
+
 .application-name {
     font-weight: bold;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .applications-list {

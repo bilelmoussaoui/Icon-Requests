@@ -4,10 +4,11 @@ from gi import require_version
 require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, Gdk, GObject, GLib
 from gettext import gettext as _
-from widgets.headerbar import HeaderBar
 import logging
-from widgets.applications_list import ApplicationsList
-from widgets.search_bar import SearchBar
+from IconReport.widgets.headerbar import HeaderBar
+from IconReport.widgets.applications_list import ApplicationsList
+from IconReport.widgets.search_bar import SearchBar
+
 
 class Window(Gtk.ApplicationWindow):
     main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -32,7 +33,6 @@ class Window(Gtk.ApplicationWindow):
         self.connect("delete-event", lambda x, y: self.app.on_quit())
         self.add(self.main_box)
 
-
     def generate_headerbar(self):
         self.hb = HeaderBar(self)
         self.set_titlebar(self.hb)
@@ -48,13 +48,15 @@ class Window(Gtk.ApplicationWindow):
         self.unsupported_box = Gtk.ScrolledWindow()
         unsupported_list = ApplicationsList(self, "unsupported")
         self.unsupported_box.add(unsupported_list)
-        self.hb.stack.add_titled(self.unsupported_box, "unsupported", _("Unsupported"))
+        self.hb.stack.add_titled(self.unsupported_box,
+                                 "unsupported", _("Unsupported"))
 
         self.hardcoded_box = Gtk.ScrolledWindow()
         hardcoded_list = ApplicationsList(self, "hardcoded")
         self.hardcoded_box.add(hardcoded_list)
-        self.hb.stack.add_titled(self.hardcoded_box, "hardcoded", _("Hardcoded"))
+        self.hb.stack.add_titled(
+            self.hardcoded_box, "hardcoded", _("Hardcoded"))
         self.search_bar = SearchBar(all_list, unsupported_list, hardcoded_list, self,
-                            self.hb.search_button)
+                                    self.hb.search_button)
         self.main_box.add(self.search_bar)
         self.main_box.add(self.hb.stack)

@@ -14,12 +14,21 @@ def get_info_from_dsktp_file(desktop_file):
         config.read(desktop_file)
         desktop_infos = {}
         try:
-            desktop_infos["icon"] = config.get("Desktop Entry", "Icon")
-            desktop_infos["is_hardcoded"] = is_hardcoded(desktop_infos["icon"])
-            desktop_infos["is_supported"] = is_supported(
-                desktop_infos["icon"], desktop_infos["is_hardcoded"])
+            icon_name = config.get("Desktop Entry", "Icon")
+            icon_info = get_icon_informations(icon_name)
+            is_hardcoded = icon_info[3]
+            is_in_pixmaps = icon_info[2]
+            icon_path = icon_info[0]
+            is_supported = icon_info[1]
+            desktop_infos["icon"] = icon_name
+            desktop_infos["is_hardcoded"] = is_hardcoded
+            desktop_infos["is_supported"] = is_supported
+            desktop_infos["is_in_pixmaps"] = is_in_pixmaps
+            desktop_infos["icon_path"] = icon_path
             desktop_infos["name"] = config.get("Desktop Entry", "Name")
             desktop_infos["desktop"] = path.basename(desktop_file)
+            desktop_infos["description"] = config.get(
+                "Desktop Entry", "Comment")
             desktop_infos[
                 "path"] = "/".join(desktop_file.split("/")[:-1]) + "/"
             return desktop_infos
@@ -46,8 +55,39 @@ def list_supported_icons():
         icons.sort()
         return icons
     else:
-        pass
         return None
+
+
+def get_icon_informations(icon_name):
+    theme = Gtk.IconTheme.get_default()
+    is_supported = False
+    is_in_pixmaps = False
+    is_hardcoded = is_hardcoded_icon(icon_name)
+    icon_path = ""
+    is_in_theme = True
+    icon = theme.lookup_icon(icon_name, 48, 0)
+    if is_hardcoded:
+        icon_path = icon_name
+        if len(icon_path.split("/")) == 1:
+            if icon:
+                icon_path = icon.get_filename()
+    else:
+        if icon:
+            icon_path = icon.get_filename()
+        else:
+            for pixmaps_path in PIXMAPS_PATHS:
+                for icon in listdir(pixmaps_path):
+                    if path.basename(icon) == path.basename(icon_name):
+                        icon_path = pixmaps_path + icon_name
+                        is_in_pixmaps = True
+                        break
+                if is_in_pixmaps:
+                    break
+    if not icon_path:
+        icon_path = theme.lookup_icon("image-missing", 48, 0).get_filename()
+    is_supported = icon_name in SUPPORTED_ICONS
+    return icon_path, is_supported, is_in_pixmaps, is_hardcoded
+
 
 def is_gnome():
     """
@@ -66,7 +106,10 @@ def get_username():
     return getpwuid(getuid())[0]
 
 ICONS_PATHS = ["/usr/share/icons/",
+               "/usr/local/share/icons/",
                "/home/%s/.local/share/icons/" % get_username()]
+PIXMAPS_PATHS = ["/usr/share/pixmaps/",
+                 "/usr/local/share/pixmaps/"]
 
 DESKTOP_FILE_DIRS = ["/usr/share/applications/",
                      "/usr/share/applications/kde4/",
@@ -80,22 +123,23 @@ IGNORE_FILES = ["defaults.list", "mimeapps.list", "mimeinfo.cache"]
 
 SUPPORTED_ICONS = list_supported_icons()
 
-def is_hardcoded(icon_name):
+
+def is_hardcoded_icon(icon_name):
     img_exts = ["png", "svg", "xpm"]
     icon_path = icon_name.split("/")
     ext = path.splitext(icon_name)[1]
-    return len(icon_path) > 1 or ext.lower() in img_exts
-
-
-def is_supported(icon_name, is_hardcoded):
-    if is_hardcoded:
-        icon_name = path.splitext(path.basename(icon_name))[0]
-    return icon_name in SUPPORTED_ICONS
+    is_hardcoded = False
+    if ext.lower() in img_exts or len(icon_path) > 1:
+        is_hardcoded = True
+    if "-symbolic" in icon_name:
+        is_hardcoded = True
+    return is_hardcoded
 
 
 def get_desktop_files_info():
     global DESKTOP_FILE_DIRS, IGNORE_FILES
     desktop_files = {}
+    already_added = []
     for desktop_dir in DESKTOP_FILE_DIRS:
         if path.isdir(desktop_dir):
             all_files = listdir(desktop_dir)
@@ -103,7 +147,8 @@ def get_desktop_files_info():
                 desktop_file_path = desktop_dir + desktop_file
                 ext = path.splitext(desktop_file)[1].lower().strip(".")
                 if desktop_file and desktop_file not in IGNORE_FILES:
-                    if ext == "desktop":
+                    if ext == "desktop" and not desktop_file in already_added:
+                        already_added.append(desktop_file)
                         desktop_info = get_info_from_dsktp_file(
                             desktop_file_path)
                         if desktop_info:
@@ -113,25 +158,13 @@ def get_desktop_files_info():
     return data
 
 
-def get_icon(icon_name):
+def get_icon(icon_path):
     """
         Generate a GdkPixbuf image
         :param image: icon name or image path
         :return: GdkPixbux Image
     """
-    theme = Gtk.IconTheme.get_default()
-    if is_hardcoded(icon_name):
-        if path.isfile(icon_name):
-            icon = GdkPixbuf.Pixbuf.new_from_file(icon_name)
-        else:
-            icon = theme.load_icon("image-missing", 48, 0)
-    else:
-        if theme.has_icon(icon_name):
-            icon = theme.load_icon(icon_name, 48, 0)
-        else:
-            icon = theme.load_icon("image-missing", 48, 0)
+    icon = GdkPixbuf.Pixbuf.new_from_file(icon_path)
     if icon.get_width() != 48 or icon.get_height() != 48:
         icon = icon.scale_simple(48, 48, GdkPixbuf.InterpType.BILINEAR)
     return icon
-
-list_supported_icons()

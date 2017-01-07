@@ -3,12 +3,14 @@ require_version("Gtk", "3.0")
 from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk
 from gettext import gettext as _
 import logging
-from widgets.application_row import ApplicationRow
+from IconReport.widgets.application_row import ApplicationRow
 import sys
 sys.path.insert(0, '../')
-from utils import get_desktop_files_info
+from IconReport.utils import get_desktop_files_info
+
 
 class ApplicationsList(Gtk.ListBox):
+
     def __init__(self, parent, type):
         self.parent = parent
         self.type = type
@@ -18,7 +20,7 @@ class ApplicationsList(Gtk.ListBox):
 
     def generate(self):
         desktop_files = get_desktop_files_info()
-        sorted(desktop_files, key= lambda x : desktop_files[x]["name"])
+        sorted(desktop_files, key=lambda x: desktop_files[x]["name"])
         if len(desktop_files) != 0:
             for desktop_file in desktop_files:
                 desktop_info = desktop_files[desktop_file]
