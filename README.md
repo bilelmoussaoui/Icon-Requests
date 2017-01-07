@@ -2,7 +2,7 @@
 A Gtk application to report missing icons to Numix-core repository 
 
 ### Screenshots
-<img src="screenshots/screenshot1.png" /> <img src="screenshots/screenshot2.png" /> <img src="screenshots/screenshot3.png" width="" />
+<img src="screenshots/screenshot1.png" width="280" /> <img src="screenshots/screenshot2.png" width="280"/> <img src="screenshots/screenshot3.png"  width="280" />
 
 
 ### Build from source code
