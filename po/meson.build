@@ -7,4 +7,4 @@ if r.returncode() != 0
 endif
 
 langs = r.stdout().strip().split()
-i18n.gettext('numix-icon-report', languages : langs)
+i18n.gettext('icon-requests', languages : langs)

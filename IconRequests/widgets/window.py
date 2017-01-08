@@ -5,9 +5,9 @@ require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, Gdk, GObject, GLib
 from gettext import gettext as _
 import logging
-from IconReport.widgets.headerbar import HeaderBar
-from IconReport.widgets.applications_list import ApplicationsList
-from IconReport.widgets.search_bar import SearchBar
+from IconRequests.widgets.headerbar import HeaderBar
+from IconRequests.widgets.applications_list import ApplicationsList
+from IconRequests.widgets.search_bar import SearchBar
 
 
 class Window(Gtk.ApplicationWindow):
@@ -25,8 +25,8 @@ class Window(Gtk.ApplicationWindow):
         """
         Gtk.ApplicationWindow.__init__(self, type=Gtk.WindowType.TOPLEVEL,
                                        application=self.app)
-        self.set_wmclass("Numix Icon Reporter", "numix-icon-report")
-        self.set_icon_name("numix-icon-report")
+        self.set_wmclass("Icon Requestser", "icon-requests")
+        self.set_icon_name("icon-requests")
         self.resize(400, 650)
         self.set_size_request(400, 650)
         self.set_resizable(True)
@@ -56,7 +56,7 @@ class Window(Gtk.ApplicationWindow):
         self.hardcoded_box.add(hardcoded_list)
         self.hb.stack.add_titled(
             self.hardcoded_box, "hardcoded", _("Hardcoded"))
-        self.search_bar = SearchBar(all_list, unsupported_list, hardcoded_list, self,
-                                    self.hb.search_button)
+        search_list = [all_list, unsupported_list, hardcoded_list]
+        self.search_bar = SearchBar(self, self.hb.search_button, search_list)
         self.main_box.add(self.search_bar)
         self.main_box.add(self.hb.stack)

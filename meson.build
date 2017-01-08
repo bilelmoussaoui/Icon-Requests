@@ -1,5 +1,5 @@
 # See https://github.com/mesonbuild/meson/issues/226
-project('numix-icon-report', 'c',
+project('icon-requests', 'c',
 	version: '0.1')
 
 
@@ -29,12 +29,12 @@ message('Python install dir found : YES ' + python_dir)
 
 # Configuration params
 conf = configuration_data()
-conf.set('PACKAGE_URL', 'https://github.com/bil-elmoussaoui/Numix-icon-report')
+conf.set('PACKAGE_URL', 'https://github.com/bil-elmoussaoui/Icon-Requests')
 conf.set('LIBDIR', get_option('prefix') + '/' + get_option('libdir'))
-conf.set('DATADIR', get_option('prefix') + '/' + get_option('datadir') + '/IconReport/')
+conf.set('DATADIR', get_option('prefix') + '/' + get_option('datadir') + '/IconRequests/')
 conf.set('LOCALE_DIR', get_option('prefix') + '/' + get_option('datadir') + '/locale/')
-conf.set('PACKAGE_NAME', 'Numix Icon Report')
-conf.set('PACKAGE', 'numix-icon-report')
+conf.set('PACKAGE_NAME', 'Icon Requests')
+conf.set('PACKAGE', 'icon-requests')
 conf.set('GITVERSION', GITVERSION)
 conf.set('VERSION', meson.project_version())
 conf.set('BUILDDIR', meson.current_build_dir())
@@ -44,12 +44,12 @@ subdir('data')
 subdir('po')
 
 
-run_command(python, '-m', 'compileall', meson.current_source_dir() + '/IconReport')
-install_subdir('IconReport', install_dir: python_dir)
+run_command(python, '-m', 'compileall', meson.current_source_dir() + '/IconRequests')
+install_subdir('IconRequests', install_dir: python_dir)
 
 message('Preparing init file')
-configure_file(input : 'numix-icon-report.in', output : 'numix-icon-report', configuration : conf)
+configure_file(input : 'icon-requests.in', output : 'icon-requests', configuration : conf)
 
-configure_file = '@0@/numix-icon-report'.format(meson.current_build_dir())
+configure_file = '@0@/icon-requests'.format(meson.current_build_dir())
 install_data(configure_file, install_dir: 'bin')
 meson.add_install_script('meson_post_install.sh')

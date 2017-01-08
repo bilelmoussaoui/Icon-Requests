@@ -15,22 +15,22 @@ _ = gettext.gettext
 import argparse
 import faulthandler
 from os import path, environ as env
-from IconReport.application import Application
+from IconRequests.application import Application
 if __name__ == "__main__":
 
-    locale.bindtextdomain('Numix-IconReport', "@localedir@")
-    locale.textdomain('Numix-IconReport')
-    gettext.bindtextdomain('Numix-IconReport', "@localedir@")
-    gettext.textdomain('Numix-IconReport')
+    locale.bindtextdomain('icon-requests', "@localedir@")
+    locale.textdomain('icon-requests')
+    gettext.bindtextdomain('icon-requests', "@localedir@")
+    gettext.textdomain('icon-requests')
 
     env["DATA_DIR"] = "@pkgdatadir@"
     env["LOCALE_DIR"] = "@localedir@"
 
-    parser = argparse.ArgumentParser(prog="Numix Icon Report")
+    parser = argparse.ArgumentParser(prog="Icon Requests")
     parser.add_argument("--debug", "-d", action="store_true",
                         help=_("start in debug mode"))
     parser.add_argument("--version", "-v", action="store_true",
-                        help=_("Numix Icon Report version number"))
+                        help=_("Icon Requests version number"))
     parser.add_argument("--about", action="store_true",
                         help=_("Show about dialog"))
     args = parser.parse_args()
@@ -44,7 +44,7 @@ if __name__ == "__main__":
                         datefmt='%Y-%m-%d %H:%M:%S')
 
     resource = Gio.resource_load(path.join('@DATADIR@',
-                                           'numix-icon-report.gresource'))
+                                           'icon-requests.gresource'))
     Gio.Resource._register(resource)
     if args.version:
         sys.exit("Version : @VERSION@")

@@ -1,11 +1,13 @@
-from configparser import ConfigParser, NoOptionError
-from os import listdir, path, getuid, environ as env, walk
+from configparser import ConfigParser, NoOptionError, RawConfigParser
+from os import listdir, path, getuid, environ as env
 from gi import require_version
 from pwd import getpwuid
 require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gio
 from subprocess import Popen, PIPE
 from collections import OrderedDict
+from shutil import copyfile
+from IconRequests.modules.upload.imgur import imgur_upload_img
 
 
 def get_info_from_dsktp_file(desktop_file):
@@ -38,6 +40,29 @@ def get_info_from_dsktp_file(desktop_file):
         return False
 
 
+def copy_file(src, destination, overwrite=False):
+    """
+    Simple copy file function with the possibility to overwrite the file.
+    Args :
+        src(str) : source file
+        dest(str) : destination folder
+        overwrite(bool) : True to overwrite the file False by default
+    """
+    if overwrite:
+        if path.isfile(destination):
+            remove(destination)
+        copyfile(src, destination)
+    else:
+        if not path.isfile(destination):
+            copyfile(src, destination)
+
+
+def change_icon_name(desktop_file, icon_name):
+    config = RawConfigParser()
+    config.read(desktop_file)
+    config.set("Desktop Entry", "Icon", icon_name)
+
+
 def get_theme_name():
     gsettings = Gio.Settings.new("org.gnome.desktop.interface")
     return str(gsettings.get_value("icon-theme")).strip("'")
@@ -46,16 +71,18 @@ def get_theme_name():
 def list_supported_icons():
     theme_name = get_theme_name()
     if theme_name.lower() in ["numix-square", "numix-circle"]:
-        icons = []
-        for icon_path in ICONS_PATHS:
-            if path.exists(icon_path + theme_name):
-                icons.extend(listdir(icon_path + theme_name + "/48/apps/"))
-        icons = list(set(icons))
-        icons = [icon.replace(".svg", "") for icon in icons]
-        icons.sort()
-        return icons
+        icon_size = "48"
     else:
-        return None
+        icon_size = "48x48"
+    icons = []
+    for icon_path in ICONS_PATHS:
+        if path.exists(icon_path + theme_name):
+            icons.extend(listdir("%s/%s/apps/" %
+                                 (icon_path + theme_name, icon_size)))
+    icons = list(set(icons))
+    icons = [icon.replace(".svg", "") for icon in icons]
+    icons.sort()
+    return icons
 
 
 def get_icon_informations(icon_name):
@@ -64,7 +91,6 @@ def get_icon_informations(icon_name):
     is_in_pixmaps = False
     is_hardcoded = is_hardcoded_icon(icon_name)
     icon_path = ""
-    is_in_theme = True
     icon = theme.lookup_icon(icon_name, 48, 0)
     if is_hardcoded:
         icon_path = icon_name
@@ -147,7 +173,7 @@ def get_desktop_files_info():
                 desktop_file_path = desktop_dir + desktop_file
                 ext = path.splitext(desktop_file)[1].lower().strip(".")
                 if desktop_file and desktop_file not in IGNORE_FILES:
-                    if ext == "desktop" and not desktop_file in already_added:
+                    if ext == "desktop" and desktop_file not in already_added:
                         already_added.append(desktop_file)
                         desktop_info = get_info_from_dsktp_file(
                             desktop_file_path)
@@ -156,6 +182,14 @@ def get_desktop_files_info():
     data = OrderedDict(sorted(desktop_files.items(),
                               key=lambda x: x[1]["name"].lower()))
     return data
+
+
+def upload_icon(icon_path, app_name):
+    icon_extension = path.splitext(icon_path)[1].lower().strip(".")
+    if icon_extension == "png":
+        icon_url = imgur_upload_img(icon_path, app_name)
+        return icon_url
+    return None
 
 
 def get_icon(icon_path):

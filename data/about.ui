@@ -9,14 +9,14 @@
         <property name="window_position">center</property>
         <property name="destroy_with_parent">True</property>
         <property name="type_hint">menu</property>
-        <property name="program_name">Numix Icon Report</property>
+        <property name="program_name">Icon Requests</property>
         <property name="version">0.1</property>
-        <property name="comments" translatable="yes">Simple application to report missing Numix icons to github repository</property>
+        <property name="comments" translatable="yes">Simple application to report missing icons to github repository</property>
         <property name="license" translatable="yes">This program comes with absolutely no warranty. See the &lt;a href="http://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.</property>
         <property name="authors">Bilal Elmoussaoui</property>
-        <property name="logo_icon_name">numix-icon-report</property>
+        <property name="logo_icon_name">icon-requests</property>
         <property name="license_type">gpl-3-0</property>
-        <property name="website">https://github.com/bil-elmoussaoui/Numix-icon-report</property>
+        <property name="website">https://github.com/bil-elmoussaoui/Icon-Requests</property>
         <property name="website_label" translatable="yes">Github</property>
         <child internal-child="vbox">
             <object class="GtkBox" id="aboutdialog-vbox">

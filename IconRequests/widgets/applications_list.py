@@ -3,10 +3,10 @@ require_version("Gtk", "3.0")
 from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk
 from gettext import gettext as _
 import logging
-from IconReport.widgets.application_row import ApplicationRow
+from IconRequests.widgets.application_row import ApplicationRow
 import sys
 sys.path.insert(0, '../')
-from IconReport.utils import get_desktop_files_info
+from IconRequests.utils import get_desktop_files_info
 
 
 class ApplicationsList(Gtk.ListBox):

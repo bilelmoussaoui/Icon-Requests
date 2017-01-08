@@ -3,10 +3,9 @@
 
 from gi import require_version
 require_version("Gtk", "3.0")
-require_version("GnomeKeyring", "1.0")
 from gi.repository import Gtk, GLib, Gio, Gdk, GObject
-from IconReport.widgets.window import Window
-from IconReport.utils import is_gnome
+from IconRequests.widgets.window import Window
+from IconRequests.utils import is_gnome
 from gettext import gettext as _
 import logging
 import signal
@@ -20,14 +19,14 @@ class Application(Gtk.Application):
 
     def __init__(self):
         Gtk.Application.__init__(self,
-                                 application_id="org.Numix.IconReport",
+                                 application_id="org.gnome.IconRequests",
                                  flags=Gio.ApplicationFlags.FLAGS_NONE)
-        GLib.set_application_name(_("Numix Icon Report"))
-        GLib.set_prgname("Numix Icon Report")
+        GLib.set_application_name(_("Icon Requests"))
+        GLib.set_prgname("Icon Requests")
 
         self.menu = Gio.Menu()
         cssProviderFile = Gio.File.new_for_uri(
-            'resource:///org/Numix/IconReport/style.css')
+            'resource:///org/gnome/IconRequests/style.css')
         cssProvider = Gtk.CssProvider()
         screen = Gdk.Screen.get_default()
         styleContext = Gtk.StyleContext()
@@ -93,7 +92,7 @@ class Application(Gtk.Application):
     def shortcuts_dialog():
         if Gtk.get_major_version() >= 3 and Gtk.get_minor_version() >= 20:
             builder = Gtk.Builder()
-            builder.add_from_resource('/org/Numix/IconReport/shortcuts.ui')
+            builder.add_from_resource('/org/gnome/IconRequests/shortcuts.ui')
             shortcuts = builder.get_object("shortcuts")
             return shortcuts
         return None
@@ -104,7 +103,7 @@ class Application(Gtk.Application):
             Shows about dialog
         """
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/Numix/IconReport/about.ui')
+        builder.add_from_resource('/org/gnome/IconRequests/about.ui')
 
         dialog = builder.get_object("AboutDialog")
         return dialog
