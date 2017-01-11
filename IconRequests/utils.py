@@ -20,17 +20,20 @@ def get_info_from_dsktp_file(desktop_file):
             icon_info = get_icon_informations(icon_name)
             is_hardcoded = icon_info[3]
             is_in_pixmaps = icon_info[2]
-            icon_path = icon_info[0]
+            icon_path = icon_info[0].strip()
             is_supported = icon_info[1]
-            desktop_infos["icon"] = icon_name
+            desktop_infos["icon"] = icon_name.strip()
             desktop_infos["is_hardcoded"] = is_hardcoded
             desktop_infos["is_supported"] = is_supported
             desktop_infos["is_in_pixmaps"] = is_in_pixmaps
             desktop_infos["icon_path"] = icon_path
-            desktop_infos["name"] = config.get("Desktop Entry", "Name")
+            desktop_infos["name"] = config.get("Desktop Entry", "Name").strip()
             desktop_infos["desktop"] = path.basename(desktop_file)
-            desktop_infos["description"] = config.get(
-                "Desktop Entry", "Comment")
+            try:
+                desktop_infos["description"] = config.get(
+                    "Desktop Entry", "Comment")
+            except (KeyError, NoOptionError):
+                desktop_infos["description"] = ""
             desktop_infos[
                 "path"] = "/".join(desktop_file.split("/")[:-1]) + "/"
             return desktop_infos
@@ -97,16 +100,19 @@ def get_icon_informations(icon_name):
         if len(icon_path.split("/")) == 1:
             if icon:
                 icon_path = icon.get_filename()
+        if not path.exists(icon_path):
+            icon_path = None
     else:
         if icon:
             icon_path = icon.get_filename()
         else:
             for pixmaps_path in PIXMAPS_PATHS:
-                for icon in listdir(pixmaps_path):
-                    if path.basename(icon) == path.basename(icon_name):
-                        icon_path = pixmaps_path + icon_name
-                        is_in_pixmaps = True
-                        break
+                if path.exists(pixmaps_path):
+                    for icon in listdir(pixmaps_path):
+                        if path.basename(icon) == path.basename(icon_name):
+                            icon_path = pixmaps_path + icon_name
+                            is_in_pixmaps = True
+                            break
                 if is_in_pixmaps:
                     break
     if not icon_path:
@@ -140,10 +146,11 @@ PIXMAPS_PATHS = ["/usr/share/pixmaps/",
 DESKTOP_FILE_DIRS = ["/usr/share/applications/",
                      "/usr/share/applications/kde4/",
                      "/usr/local/share/applications/",
-                     "/usr/local/share/applications/kde4/"
+                     "/usr/local/share/applications/kde4/",
                      "/home/%s/.local/share/applications/" % get_username(),
                      "/home/%s/.local/share/applications/kde4/" % get_username(),
                      get_user_destkop()]
+
 
 IGNORE_FILES = ["defaults.list", "mimeapps.list", "mimeinfo.cache"]
 
