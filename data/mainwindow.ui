@@ -74,6 +74,7 @@
                     <object class="GtkListBox" id="AllListBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="selection_mode">none</property>
                   </object>
                 </child>
                   </object>
@@ -91,6 +92,8 @@
                     <object class="GtkListBox" id="unsupportedListBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+
+    <property name="selection_mode">none</property>
                   </object>
                 </child>
                   </object>
@@ -109,6 +112,8 @@
                     <object class="GtkListBox" id="hardcodedListBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+
+    <property name="selection_mode">none</property>
                   </object>
                 </child>
                   </object>
