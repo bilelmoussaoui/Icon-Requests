@@ -34,7 +34,8 @@ class DesktopFile(object):
         config = ConfigParser()
         try:
             config.read(self.file)
-        except (UnicodeDecodeError, DuplicateOptionError):
+        except (UnicodeDecodeError, DuplicateOptionError) as e:
+            print(e)
             raise DesktopFileCorrupted
         try:
             self.path = "/".join(self.file.split("/")[:-1]) + "/"
@@ -42,10 +43,7 @@ class DesktopFile(object):
             self.get_icon_informations()
             self.name = config.get("Desktop Entry", "Name").strip()
             self.desktop_file = path.basename(self.file)
-            try:
-                self.description = config.get("Desktop Entry", "Comment")
-            except (KeyError, NoOptionError):
-                self.description = ""
+            self.description = config.get("Desktop Entry", "Comment", fallback="")
             self.path = "/".join(self.file.split("/")[:-1]) + "/"
         except (KeyError, NoOptionError):
             raise DesktopFileCorrupted
@@ -55,7 +53,7 @@ class DesktopFile(object):
         return icon_name in SUPPORTED_ICONS
 
     def get_icon_informations(self):
-        theme = Gtk.IconTheme()
+        theme = Gtk.IconTheme.get_default()
         self.is_hardcoded_icon()
         self.icon_path = ""
         icon_name = self.icon_name

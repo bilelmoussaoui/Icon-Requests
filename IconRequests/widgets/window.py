@@ -113,6 +113,7 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
     def run(self):
         self.builder.get_object("loadingSpinner").start()
         already_added = []
+        already_added_icons = []
         for desktop_dir in DESKTOP_FILE_DIRS:
             if path.isdir(desktop_dir):
                 all_files = listdir(desktop_dir)
@@ -121,7 +122,11 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
                     ext = path.splitext(desktop_file)[1].lower().strip(".")
                     if ext == "desktop" and desktop_file not in already_added:
                         try:
-                            self.db.append(DesktopFile(desktop_file_path))
+                            desktop_file_obj = DesktopFile(desktop_file_path)
+                            icon_name = desktop_file_obj.icon_name
+                            if icon_name not in already_added_icons:
+                                self.db.append(desktop_file_obj)
+                                already_added_icons.append(icon_name)
                             already_added.append(desktop_file)
                         except DesktopFileCorrupted:
                             logging.error(
