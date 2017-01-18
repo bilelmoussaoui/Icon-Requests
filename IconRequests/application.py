@@ -12,10 +12,8 @@ import signal
 
 
 class Application(Gtk.Application):
-    win = None
+    win_object = None
     alive = True
-    send_sms_action = None
-    send_sms_window = None
 
     def __init__(self):
         Gtk.Application.__init__(self,
@@ -72,12 +70,13 @@ class Application(Gtk.Application):
             logging.debug("Adding gnome shell menu")
 
     def do_activate(self, *args):
-        if not self.win:
-            self.win = Window(self)
-            self.win.show_all()
+        if not self.win_object:
+            self.win_object = Window(self)
+            self.win_object.show_window()
+            self.win = self.win_object.window
             self.add_window(self.win)
         else:
-            self.win.present()
+            self.win_object.show_window()
 
     def on_shortcuts(self, *args):
         """
@@ -125,6 +124,6 @@ class Application(Gtk.Application):
         self.alive = False
         signal.signal(signal.SIGINT, lambda x, y: self.alive)
         if self.win:
-            # self.win.save_window_state()
+            self.win_object.save_window_state()
             self.win.destroy()
         self.quit()

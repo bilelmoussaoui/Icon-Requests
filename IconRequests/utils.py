@@ -1,47 +1,26 @@
-from configparser import ConfigParser, NoOptionError, RawConfigParser
 from os import listdir, path, getuid, environ as env
 from gi import require_version
 from pwd import getpwuid
 require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gio
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, call
 from collections import OrderedDict
 from shutil import copyfile
 from IconRequests.modules.upload.imgur import imgur_upload_img
-
-
-def get_info_from_dsktp_file(desktop_file):
-    config = ConfigParser()
-    try:
-        config.read(desktop_file)
-        desktop_infos = {}
-        try:
-            icon_name = config.get("Desktop Entry", "Icon")
-            icon_info = get_icon_informations(icon_name)
-            is_hardcoded = icon_info[3]
-            is_in_pixmaps = icon_info[2]
-            icon_path = icon_info[0].strip()
-            is_supported = icon_info[1]
-            desktop_infos["icon"] = icon_name.strip()
-            desktop_infos["is_hardcoded"] = is_hardcoded
-            desktop_infos["is_supported"] = is_supported
-            desktop_infos["is_in_pixmaps"] = is_in_pixmaps
-            desktop_infos["icon_path"] = icon_path
-            desktop_infos["name"] = config.get("Desktop Entry", "Name").strip()
-            desktop_infos["desktop"] = path.basename(desktop_file)
-            try:
-                desktop_infos["description"] = config.get(
-                    "Desktop Entry", "Comment")
-            except (KeyError, NoOptionError):
-                desktop_infos["description"] = ""
-            desktop_infos[
-                "path"] = "/".join(desktop_file.split("/")[:-1]) + "/"
-            return desktop_infos
-        except (KeyError, NoOptionError):
-            return False
-    except FileNotFoundError:
-        return False
-
+from tempfile import NamedTemporaryFile
+from io import BytesIO
+from PIL import Image
+try:
+    require_version('Rsvg', '2.0')
+    from gi.repository import Rsvg
+    import cairo
+    use_inkscape = False
+except (ImportError, AttributeError):
+    ink_flag = call(['which', 'inkscape'], stdout=PIPE, stderr=PIPE)
+    if ink_flag == 0:
+        use_inkscape = True
+    else:
+        exit("Can't load cariosvg nor inkscape")
 
 def copy_file(src, destination, overwrite=False):
     """
@@ -65,62 +44,6 @@ def change_icon_name(desktop_file, icon_name):
     config.read(desktop_file)
     config.set("Desktop Entry", "Icon", icon_name)
 
-
-def get_theme_name():
-    gsettings = Gio.Settings.new("org.gnome.desktop.interface")
-    return str(gsettings.get_value("icon-theme")).strip("'")
-
-
-def list_supported_icons():
-    theme_name = get_theme_name()
-    if theme_name.lower() in ["numix-square", "numix-circle"]:
-        icon_size = "48"
-    else:
-        icon_size = "48x48"
-    icons = []
-    for icon_path in ICONS_PATHS:
-        if path.exists(icon_path + theme_name):
-            icons.extend(listdir("%s/%s/apps/" %
-                                 (icon_path + theme_name, icon_size)))
-    icons = list(set(icons))
-    icons = [icon.replace(".svg", "") for icon in icons]
-    icons.sort()
-    return icons
-
-
-def get_icon_informations(icon_name):
-    theme = Gtk.IconTheme.get_default()
-    is_supported = False
-    is_in_pixmaps = False
-    is_hardcoded = is_hardcoded_icon(icon_name)
-    icon_path = ""
-    icon = theme.lookup_icon(icon_name, 48, 0)
-    if is_hardcoded:
-        icon_path = icon_name
-        if len(icon_path.split("/")) == 1:
-            if icon:
-                icon_path = icon.get_filename()
-        if not path.exists(icon_path):
-            icon_path = None
-    else:
-        if icon:
-            icon_path = icon.get_filename()
-        else:
-            for pixmaps_path in PIXMAPS_PATHS:
-                if path.exists(pixmaps_path):
-                    for icon in listdir(pixmaps_path):
-                        if path.basename(icon) == path.basename(icon_name):
-                            icon_path = pixmaps_path + icon_name
-                            is_in_pixmaps = True
-                            break
-                if is_in_pixmaps:
-                    break
-    if not icon_path:
-        icon_path = theme.lookup_icon("image-missing", 48, 0).get_filename()
-    is_supported = icon_name in SUPPORTED_ICONS
-    return icon_path, is_supported, is_in_pixmaps, is_hardcoded
-
-
 def is_gnome():
     """
         Check if the current distro is gnome
@@ -137,65 +60,53 @@ def get_user_destkop():
 def get_username():
     return getpwuid(getuid())[0]
 
-ICONS_PATHS = ["/usr/share/icons/",
-               "/usr/local/share/icons/",
-               "/home/%s/.local/share/icons/" % get_username()]
-PIXMAPS_PATHS = ["/usr/share/pixmaps/",
-                 "/usr/local/share/pixmaps/"]
+def convert_svg2png(infile, outfile, w, h):
+    """
+        Converts svg files to png using Cairosvg or Inkscape
+        @file_path : String; the svg file absolute path
+        @dest_path : String; the png file absolute path
+    """
+    if use_inkscape:
+        p = Popen(["inkscape", "-z", "-f", infile, "-e", outfile,
+                   "-w", str(w), "-h", str(h)],
+                  stdout=PIPE, stderr=PIPE)
+        output, err = p.communicate()
+    else:
+        handle = Rsvg.Handle()
+        svg = handle.new_from_file(infile)
+        dim = svg.get_dimensions()
 
-DESKTOP_FILE_DIRS = ["/usr/share/applications/",
-                     "/usr/share/applications/kde4/",
-                     "/usr/local/share/applications/",
-                     "/usr/local/share/applications/kde4/",
-                     "/home/%s/.local/share/applications/" % get_username(),
-                     "/home/%s/.local/share/applications/kde4/" % get_username(),
-                     get_user_destkop()]
+        img = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
+        ctx = cairo.Context(img)
+        ctx.scale(w / dim.width, h / dim.height)
+        svg.render_cairo(ctx)
 
-
-IGNORE_FILES = ["defaults.list", "mimeapps.list", "mimeinfo.cache"]
-
-SUPPORTED_ICONS = list_supported_icons()
-
-
-def is_hardcoded_icon(icon_name):
-    img_exts = ["png", "svg", "xpm"]
-    icon_path = icon_name.split("/")
-    ext = path.splitext(icon_name)[1]
-    is_hardcoded = False
-    if ext.lower() in img_exts or len(icon_path) > 1:
-        is_hardcoded = True
-    if "-symbolic" in icon_name:
-        is_hardcoded = True
-    return is_hardcoded
-
-
-def get_desktop_files_info():
-    global DESKTOP_FILE_DIRS, IGNORE_FILES
-    desktop_files = {}
-    already_added = []
-    for desktop_dir in DESKTOP_FILE_DIRS:
-        if path.isdir(desktop_dir):
-            all_files = listdir(desktop_dir)
-            for desktop_file in all_files:
-                desktop_file_path = desktop_dir + desktop_file
-                ext = path.splitext(desktop_file)[1].lower().strip(".")
-                if desktop_file and desktop_file not in IGNORE_FILES:
-                    if ext == "desktop" and desktop_file not in already_added:
-                        already_added.append(desktop_file)
-                        desktop_info = get_info_from_dsktp_file(
-                            desktop_file_path)
-                        if desktop_info:
-                            desktop_files[desktop_file_path] = desktop_info
-    data = OrderedDict(sorted(desktop_files.items(),
-                              key=lambda x: x[1]["name"].lower()))
-    return data
-
+        png_io = BytesIO()
+        img.write_to_png(png_io)
+        with open(outfile, 'wb') as fout:
+            fout.write(png_io.getvalue())
+        svg.close()
+        png_io.close()
+        img.finish()
 
 def upload_icon(icon_path, app_name):
     icon_extension = path.splitext(icon_path)[1].lower().strip(".")
-    if icon_extension == "png":
-        icon_url = imgur_upload_img(icon_path, app_name)
-        return icon_url
+    was_scaled = False
+    if icon_extension in ["svg" ,"png"]:
+        outfile = NamedTemporaryFile().name
+        if icon_extension == "svg":
+            convert_svg2png(icon_path, outfile, 48, 48)
+            icon_name = outfile
+            was_scaled = True
+            icon_extension = "png"
+        if icon_extension == "png":
+            if not was_scaled:
+                img = Image.open(icon_path)
+                img = img.resize((48, 48), Image.ANTIALIAS)
+                img.save(outfile, "PNG")
+                icon_path = outfile
+            icon_url = imgur_upload_img(icon_path, app_name)
+            return icon_url
     return None
 
 

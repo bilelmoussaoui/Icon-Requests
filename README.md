@@ -13,6 +13,8 @@ git clone https://github.com/bil-elmoussaoui/Icon-Requests && cd ./Icon-Requests
 2 - Install dependecies
   - meson (git version for now)
   - pyimugr 
+  - python3-cairosvg or inkscape
+  - Pillow
 
 3 - Build the application
 ```bash
