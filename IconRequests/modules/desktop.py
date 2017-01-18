@@ -1,11 +1,10 @@
+from IconRequests.const import SUPPORTED_ICONS
 from configparser import ConfigParser, NoOptionError, RawConfigParser, DuplicateOptionError
 from os import path, listdir
 from gi import require_version
 require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk, Gio, GLib
 
-PIXMAPS_PATHS = ["/usr/share/pixmaps/",
-                 "/usr/local/share/pixmaps/"]
 
 class DesktopFile(object):
 
@@ -27,7 +26,7 @@ class DesktopFile(object):
     def name(self):
         return self._name
 
-    @name.setter   
+    @name.setter
     def name(self, name):
         self._name = name
 
@@ -38,12 +37,6 @@ class DesktopFile(object):
         except (UnicodeDecodeError, DuplicateOptionError):
             raise DesktopFileCorrupted
         try:
-            try:
-                visible = config.get("Desktop Entry", "NoDisplay")
-                if bool(visible == "true"):
-                    raise DesktopFileInvalid
-            except (KeyError, NoOptionError):
-                pass
             self.path = "/".join(self.file.split("/")[:-1]) + "/"
             self.icon_name = config.get("Desktop Entry", "Icon").strip()
             self.get_icon_informations()
@@ -57,39 +50,34 @@ class DesktopFile(object):
         except (KeyError, NoOptionError):
             raise DesktopFileCorrupted
 
+    def get_is_supported(self):
+        icon_name = path.splitext(path.basename(self.icon_name))[0]
+        return icon_name in SUPPORTED_ICONS
+
     def get_icon_informations(self):
         theme = Gtk.IconTheme()
-        theme_name = Gio.Settings.new("org.gnome.desktop.interface").get_string("icon-theme")
-        theme.set_custom_theme(theme_name)
-        self.is_in_pixmaps = False
         self.is_hardcoded_icon()
         self.icon_path = ""
+        icon_name = self.icon_name
+        self.is_supported = self.get_is_supported()
+        full_path = False
         if self.is_hardcoded:
-            theme.append_search_path("/usr/share/pixmaps/")
-        icon = theme.lookup_icon(self.icon_name, 48, 0)
-        if self.is_hardcoded:
-            self.icon_path = self.icon_name
+            self.icon_path = icon_name
             if len(self.icon_path.split("/")) == 1:
-                if icon:
-                    self.icon_path = icon.get_filename()
-            if not path.exists(self.icon_path):
-                self.icon_path = None
-        else:
-            if icon:
-                self.icon_path = icon.get_filename()
+                icon_name = path.splitext(self.icon_name)[0]
             else:
-                for pixmaps_path in PIXMAPS_PATHS:
-                    if path.exists(pixmaps_path):
-                        for icon in listdir(pixmaps_path):
-                            if path.basename(icon) == path.basename(self.icon_name):
-                                self.icon_path = pixmaps_path + self.icon_name
-                                self.is_in_pixmaps = True
-                                break
-                    if self.is_in_pixmaps:
-                        break
-        if not self.icon_path:
-            self.icon_path = theme.lookup_icon("image-missing", 48, 0).get_filename()
-        self.is_supported = self.icon_name in theme.list_icons("Applications")
+                self.icon_path = self.icon_name
+                full_path = True
+
+        icon = theme.lookup_icon(icon_name, 48, 0)
+        if icon and not full_path:
+            self.icon_path = icon.get_filename()
+            if self.is_hardcoded:
+                self.is_supported = True
+
+        if not self.icon_path or not path.exists(self.icon_path):
+            self.icon_path = theme.lookup_icon(
+                "image-missing", 48, 0).get_filename()
 
     def is_hardcoded_icon(self):
         img_exts = ["png", "svg", "xpm"]
@@ -108,10 +96,14 @@ class DesktopFileNotFound(Exception):
     def __init__(self):
         super(DesktopFileNotFound, self).__init__()
 
+
 class DesktopFileCorrupted(Exception):
+
     def __init__(self):
         super(DesktopFileCorrupted, self).__init__()
 
+
 class DesktopFileInvalid(Exception):
+
     def __init__(self):
         super(DesktopFileInvalid, self).__init__()

@@ -93,7 +93,7 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
 
     def fix_hardcoded_icon(self, *args):
         icon_name = self.desktop_file.icon_name
-        icon_extension = path.splitext(icon_name)[1].lower().strip(".")    
+        icon_extension = path.splitext(icon_name)[1].lower().strip(".")
         new_icon_name = icon_name.split(
             "/")[-1].replace(".%s" % icon_extension, "")
         if new_icon_name.lower() in ["logo", "icon"]:
@@ -131,7 +131,8 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
 
     def do_icon_uploaded(self, *args):
         # TODO : use glib instead of wewbbrowser
-        theme =  Gio.Settings.new("org.gnome.desktop.interface").get_string("icon-theme")
+        theme = Gio.Settings.new(
+            "org.gnome.desktop.interface").get_string("icon-theme")
         repos_obj = Gio.File.new_for_uri(
             'resource:///org/gnome/IconRequests/repos.json')
         repositories = loads(str(repos_obj.load_contents(None)

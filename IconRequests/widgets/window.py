@@ -5,34 +5,29 @@ require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, Gdk, GObject, GLib
 from gettext import gettext as _
 import logging
+from IconRequests.const import DESKTOP_FILE_DIRS
 from IconRequests.modules.settings import Settings
 from IconRequests.modules.desktop import DesktopFile, DesktopFileCorrupted, DesktopFileInvalid
 from IconRequests.widgets.headerbar import HeaderBar
 from IconRequests.widgets.search_bar import SearchBar
 from IconRequests.widgets.application_row import ApplicationRow
-from IconRequests.utils import get_username, get_user_destkop
 from threading import Thread
 from os import path, listdir
 
-DESKTOP_FILE_DIRS = ["/usr/share/applications/",
-                     "/usr/share/applications/kde4/",
-                     "/usr/local/share/applications/",
-                     "/usr/local/share/applications/kde4/",
-                     "/home/%s/.local/share/applications/" % get_username(),
-                     "/home/%s/.local/share/applications/kde4/" % get_username(),
-                     get_user_destkop()]
 
 class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
     __gsignals__ = {
         'loaded': (GObject.SIGNAL_RUN_FIRST, None, (bool,))
     }
-    db =  []
+    db = []
+
     def __init__(self, application):
         GObject.GObject.__init__(self)
         Thread.__init__(self)
         self.settings = Settings.new()
 
-        self.builder = Gtk.Builder.new_from_resource("/org/gnome/IconRequests/mainwindow.ui")
+        self.builder = Gtk.Builder.new_from_resource(
+            "/org/gnome/IconRequests/mainwindow.ui")
         self.window = self.builder.get_object("MainWindow")
         self.window.connect("key-press-event", self.__on_key_press)
 
@@ -43,7 +38,7 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
             self.window.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         self.stack = self.builder.get_object("Stack")
         self.main_stack = self.builder.get_object("MainStack")
-        # Listbox 
+        # Listbox
         self.all = self.builder.get_object("AllListBox")
         self.unsupported = self.builder.get_object("unsupportedListBox")
         self.hardcoded = self.builder.get_object("hardcodedListBox")
@@ -52,14 +47,13 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
 
         self.search_button = self.builder.get_object("SearchButton")
         self.search_button.connect("toggled", self.__toggle_search)
-       
+
         self.search_entry = self.builder.get_object("searchEntry")
         self.search_entry.set_width_chars(28)
         self.search_entry.connect("search-changed", self.__filter_applications)
 
         self.revealer = self.builder.get_object("Revealer")
         self.search_list = [self.all, self.unsupported, self.hardcoded]
-        #self.search_bar = SearchBar(self, search_button, search_list)
 
         self.main_stack.set_visible_child_name("loading")
         self.start()
@@ -74,8 +68,8 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
                 self.search_entry.grab_focus_without_selecting()
 
         if keyname == "backspace":
-            if (len(self.search_entry.get_text()) == 0 
-                and self.revealer.get_reveal_child()):
+            if (len(self.search_entry.get_text()) == 0
+                    and self.revealer.get_reveal_child()):
                 self.search_button.set_active(False)
                 return True
 
@@ -114,7 +108,7 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
 
     def show_window(self):
         self.window.show_all()
-        self.window.present()        
+        self.window.present()
 
     def run(self):
         self.builder.get_object("loadingSpinner").start()
@@ -127,12 +121,14 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
                     ext = path.splitext(desktop_file)[1].lower().strip(".")
                     if ext == "desktop" and desktop_file not in already_added:
                         try:
-                            self.db.append(DesktopFile(desktop_file_path))  
+                            self.db.append(DesktopFile(desktop_file_path))
                             already_added.append(desktop_file)
                         except DesktopFileCorrupted:
-                            logging.error("Desktop file corrupted {0}".format(desktop_file))
+                            logging.error(
+                                "Desktop file corrupted {0}".format(desktop_file))
                         except DesktopFileInvalid:
-                            logging.debug("Desktop file not displayed {0}".format(desktop_file))
+                            logging.debug(
+                                "Desktop file not displayed {0}".format(desktop_file))
         self.db = sorted(self.db, key=lambda x: x.name.lower())
         self.emit("loaded", True)
 
@@ -140,7 +136,7 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
         if signal:
             for desktop_file in self.db:
                 if desktop_file.is_hardcoded:
-                    self.hardcoded.add(ApplicationRow(desktop_file))    
+                    self.hardcoded.add(ApplicationRow(desktop_file))
                 if not desktop_file.is_supported:
                     self.unsupported.add(ApplicationRow(desktop_file))
                 self.all.add(ApplicationRow(desktop_file))

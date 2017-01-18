@@ -2,7 +2,7 @@ from os import listdir, path, getuid, environ as env
 from gi import require_version
 from pwd import getpwuid
 require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf, Gio
+from gi.repository import Gtk, GdkPixbuf, Gio, GLib
 from subprocess import Popen, PIPE, call
 from collections import OrderedDict
 from shutil import copyfile
@@ -21,6 +21,7 @@ except (ImportError, AttributeError):
         use_inkscape = True
     else:
         exit("Can't load cariosvg nor inkscape")
+
 
 def copy_file(src, destination, overwrite=False):
     """
@@ -44,6 +45,7 @@ def change_icon_name(desktop_file, icon_name):
     config.read(desktop_file)
     config.set("Desktop Entry", "Icon", icon_name)
 
+
 def is_gnome():
     """
         Check if the current distro is gnome
@@ -57,8 +59,38 @@ def get_user_destkop():
     return output.decode("utf-8").strip() + "/"
 
 
+def get_supported_icons():
+    theme_name = Gio.Settings.new(
+        "org.gnome.desktop.interface").get_string("icon-theme")
+    icons_paths = [
+        '{0}/.icons/{1}/'.format(GLib.get_home_dir(), theme_name),
+        '{0}/.local/share/icons/{1}/'.format(GLib.get_home_dir(), theme_name),
+        '/usr/local/share/icons/{0}/'.format(theme_name),
+        '/usr/share/icons/{0}/'.format(theme_name),
+    ]
+    subdirs = [
+        "48x48/apps/",
+        "48x48/applications/",
+        "48/apps/",
+        "48/applications/",
+    ]
+    icons = []
+    for icon_path in icons_paths:
+        for icon_size in subdirs:
+            try:
+                icons = listdir(icon_path + icon_size)
+                for icon in icons:
+                    icon = path.splitext(icon)[0]
+                    if icon not in icons:
+                        icons.append(icon)
+            except FileNotFoundError:
+                pass
+    return icons
+
+
 def get_username():
     return getpwuid(getuid())[0]
+
 
 def convert_svg2png(infile, outfile, w, h):
     """
@@ -89,14 +121,15 @@ def convert_svg2png(infile, outfile, w, h):
         png_io.close()
         img.finish()
 
+
 def upload_icon(icon_path, app_name):
     icon_extension = path.splitext(icon_path)[1].lower().strip(".")
     was_scaled = False
-    if icon_extension in ["svg" ,"png"]:
+    if icon_extension in ["svg", "png"]:
         outfile = NamedTemporaryFile().name
         if icon_extension == "svg":
             convert_svg2png(icon_path, outfile, 48, 48)
-            icon_name = outfile
+            icon_path = outfile
             was_scaled = True
             icon_extension = "png"
         if icon_extension == "png":

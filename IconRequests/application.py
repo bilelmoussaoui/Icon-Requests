@@ -31,7 +31,7 @@ class Application(Gtk.Application):
         try:
             cssProvider.load_from_file(cssProviderFile)
             styleContext.add_provider_for_screen(screen, cssProvider,
-                                             Gtk.STYLE_PROVIDER_PRIORITY_USER)
+                                                 Gtk.STYLE_PROVIDER_PRIORITY_USER)
             logging.debug("Loading css file ")
         except Exception as e:
             logging.error("Error message %s" % str(e))
