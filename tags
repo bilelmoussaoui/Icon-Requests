@@ -1,0 +1,187 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Application	IconRequests/application.py	/^class Application(Gtk.Application):$/;"	kind:class	line:14
+ApplicationRow	IconRequests/widgets/application_row.py	/^class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):$/;"	kind:class	line:13
+ApplicationRow	IconRequests/widgets/window.py	/^from IconRequests.widgets.application_row import ApplicationRow$/;"	kind:namespace	line:13
+ConfigParser	IconRequests/modules/desktop.py	/^from configparser import ConfigParser, NoOptionError, RawConfigParser, DuplicateOptionError$/;"	kind:namespace	line:2
+DESKTOP_FILE_DIRS	IconRequests/const.py	/^DESKTOP_FILE_DIRS = ["\/usr\/share\/applications\/",$/;"	kind:variable	line:18
+DESKTOP_FILE_DIRS	IconRequests/widgets/window.py	/^from IconRequests.const import DESKTOP_FILE_DIRS, settings$/;"	kind:namespace	line:8
+DesktopFile	IconRequests/modules/desktop.py	/^class DesktopFile(object):$/;"	kind:class	line:9
+DesktopFile	IconRequests/widgets/window.py	/^from IconRequests.modules.desktop import DesktopFile, DesktopFileCorrupted, DesktopFileInvalid$/;"	kind:namespace	line:10
+DesktopFileCorrupted	IconRequests/modules/desktop.py	/^class DesktopFileCorrupted(Exception):$/;"	kind:class	line:101
+DesktopFileCorrupted	IconRequests/widgets/window.py	/^from IconRequests.modules.desktop import DesktopFile, DesktopFileCorrupted, DesktopFileInvalid$/;"	kind:namespace	line:10
+DesktopFileInvalid	IconRequests/modules/desktop.py	/^class DesktopFileInvalid(Exception):$/;"	kind:class	line:107
+DesktopFileInvalid	IconRequests/widgets/window.py	/^from IconRequests.modules.desktop import DesktopFile, DesktopFileCorrupted, DesktopFileInvalid$/;"	kind:namespace	line:10
+DesktopFileNotFound	IconRequests/modules/desktop.py	/^class DesktopFileNotFound(Exception):$/;"	kind:class	line:95
+DuplicateOptionError	IconRequests/modules/desktop.py	/^from configparser import ConfigParser, NoOptionError, RawConfigParser, DuplicateOptionError$/;"	kind:namespace	line:2
+GLib	IconRequests/application.py	/^from gi.repository import Gtk, GLib, Gio, Gdk, GObject$/;"	kind:namespace	line:6
+GLib	IconRequests/const.py	/^from gi.repository import GLib$/;"	kind:namespace	line:1
+GLib	IconRequests/modules/desktop.py	/^from gi.repository import Gtk, Gio, GLib$/;"	kind:namespace	line:6
+GLib	IconRequests/utils.py	/^from gi.repository import Gtk, GdkPixbuf, Gio, GLib$/;"	kind:namespace	line:5
+GLib	IconRequests/widgets/application_row.py	/^from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk, Pango$/;"	kind:namespace	line:3
+GLib	IconRequests/widgets/window.py	/^from gi.repository import Gtk, Gio, Gdk, GObject, GLib$/;"	kind:namespace	line:5
+GObject	IconRequests/application.py	/^from gi.repository import Gtk, GLib, Gio, Gdk, GObject$/;"	kind:namespace	line:6
+GObject	IconRequests/widgets/application_row.py	/^from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk, Pango$/;"	kind:namespace	line:3
+GObject	IconRequests/widgets/window.py	/^from gi.repository import Gtk, Gio, Gdk, GObject, GLib$/;"	kind:namespace	line:5
+Gdk	IconRequests/application.py	/^from gi.repository import Gtk, GLib, Gio, Gdk, GObject$/;"	kind:namespace	line:6
+Gdk	IconRequests/widgets/application_row.py	/^from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk, Pango$/;"	kind:namespace	line:3
+Gdk	IconRequests/widgets/window.py	/^from gi.repository import Gtk, Gio, Gdk, GObject, GLib$/;"	kind:namespace	line:5
+GdkPixbuf	IconRequests/utils.py	/^from gi.repository import Gtk, GdkPixbuf, Gio, GLib$/;"	kind:namespace	line:5
+GdkPixbuf	IconRequests/widgets/application_row.py	/^from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk, Pango$/;"	kind:namespace	line:3
+Gio	IconRequests/application.py	/^from gi.repository import Gtk, GLib, Gio, Gdk, GObject$/;"	kind:namespace	line:6
+Gio	IconRequests/modules/desktop.py	/^from gi.repository import Gtk, Gio, GLib$/;"	kind:namespace	line:6
+Gio	IconRequests/modules/settings.py	/^from gi.repository import Gio$/;"	kind:namespace	line:2
+Gio	IconRequests/utils.py	/^from gi.repository import Gtk, GdkPixbuf, Gio, GLib$/;"	kind:namespace	line:5
+Gio	IconRequests/widgets/application_row.py	/^from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk, Pango$/;"	kind:namespace	line:3
+Gio	IconRequests/widgets/window.py	/^from gi.repository import Gtk, Gio, Gdk, GObject, GLib$/;"	kind:namespace	line:5
+Gtk	IconRequests/application.py	/^from gi.repository import Gtk, GLib, Gio, Gdk, GObject$/;"	kind:namespace	line:6
+Gtk	IconRequests/modules/desktop.py	/^from gi.repository import Gtk, Gio, GLib$/;"	kind:namespace	line:6
+Gtk	IconRequests/utils.py	/^from gi.repository import Gtk, GdkPixbuf, Gio, GLib$/;"	kind:namespace	line:5
+Gtk	IconRequests/widgets/application_row.py	/^from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk, Pango$/;"	kind:namespace	line:3
+Gtk	IconRequests/widgets/window.py	/^from gi.repository import Gtk, Gio, Gdk, GObject, GLib$/;"	kind:namespace	line:5
+HeaderBar	IconRequests/widgets/window.py	/^from IconRequests.widgets.headerbar import HeaderBar$/;"	kind:namespace	line:11
+Image	IconRequests/modules/upload.py	/^from PIL import Image$/;"	kind:namespace	line:4
+Imgur	IconRequests/const.py	/^from IconRequests.modules.upload.imgur import Imgur$/;"	kind:namespace	line:4
+Imgur	IconRequests/modules/upload/imgur.py	/^class Imgur(Upload):$/;"	kind:class	line:9
+Imgur	IconRequests/widgets/window.py	/^from IconRequests.modules.upload.imgur import Imgur$/;"	kind:namespace	line:9
+NamedTemporaryFile	IconRequests/modules/upload.py	/^from tempfile import NamedTemporaryFile$/;"	kind:namespace	line:3
+NoOptionError	IconRequests/modules/desktop.py	/^from configparser import ConfigParser, NoOptionError, RawConfigParser, DuplicateOptionError$/;"	kind:namespace	line:2
+OrderedDict	IconRequests/utils.py	/^from collections import OrderedDict$/;"	kind:namespace	line:7
+PIPE	IconRequests/utils.py	/^from subprocess import Popen, PIPE, call$/;"	kind:namespace	line:6
+Pango	IconRequests/widgets/application_row.py	/^from gi.repository import Gtk, GObject, GdkPixbuf, Gio, GLib, Gdk, Pango$/;"	kind:namespace	line:3
+Popen	IconRequests/utils.py	/^from subprocess import Popen, PIPE, call$/;"	kind:namespace	line:6
+RawConfigParser	IconRequests/modules/desktop.py	/^from configparser import ConfigParser, NoOptionError, RawConfigParser, DuplicateOptionError$/;"	kind:namespace	line:2
+Rsvg	IconRequests/utils.py	/^    from gi.repository import Rsvg$/;"	kind:namespace	line:11
+SUPPORTED_ICONS	IconRequests/const.py	/^SUPPORTED_ICONS = []$/;"	kind:variable	line:6
+SUPPORTED_ICONS	IconRequests/modules/desktop.py	/^from IconRequests.const import SUPPORTED_ICONS$/;"	kind:namespace	line:1
+SearchBar	IconRequests/widgets/window.py	/^from IconRequests.widgets.search_bar import SearchBar$/;"	kind:namespace	line:12
+Settings	IconRequests/const.py	/^from IconRequests.modules.settings import Settings$/;"	kind:namespace	line:3
+Settings	IconRequests/modules/settings.py	/^class Settings(Gio.Settings):$/;"	kind:class	line:5
+Settings	IconRequests/modules/upload/imgur.py	/^from IconRequests.modules.settings import Settings$/;"	kind:namespace	line:2
+Thread	IconRequests/const.py	/^from threading import Thread$/;"	kind:namespace	line:5
+Thread	IconRequests/widgets/application_row.py	/^from threading import Thread$/;"	kind:namespace	line:10
+Thread	IconRequests/widgets/window.py	/^from threading import Thread$/;"	kind:namespace	line:14
+UPLOAD_URI	IconRequests/modules/upload/imgur.py	/^UPLOAD_URI = "https:\/\/api.imgur.com\/3\/upload"$/;"	kind:variable	line:7
+Upload	IconRequests/modules/upload.py	/^class Upload:$/;"	kind:class	line:6
+Upload	IconRequests/modules/upload/imgur.py	/^from IconRequests.modules.upload import Upload$/;"	kind:namespace	line:3
+Window	IconRequests/application.py	/^from IconRequests.widgets.window import Window$/;"	kind:namespace	line:7
+Window	IconRequests/widgets/window.py	/^class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):$/;"	kind:class	line:18
+_	IconRequests/application.py	/^from gettext import gettext as _$/;"	kind:namespace	line:9
+_	IconRequests/widgets/application_row.py	/^from gettext import gettext as _$/;"	kind:namespace	line:4
+_	IconRequests/widgets/window.py	/^from gettext import gettext as _$/;"	kind:namespace	line:6
+__filter_applications	IconRequests/widgets/window.py	/^    def __filter_applications(self, entry):$/;"	kind:member	line:106
+__gsignals__	IconRequests/widgets/application_row.py	/^    __gsignals__ = {$/;"	kind:variable	line:14
+__gsignals__	IconRequests/widgets/window.py	/^    __gsignals__ = {$/;"	kind:variable	line:19
+__init__	IconRequests/application.py	/^    def __init__(self):$/;"	kind:member	line:18
+__init__	IconRequests/modules/desktop.py	/^    def __init__(self):$/;"	kind:member	line:103
+__init__	IconRequests/modules/desktop.py	/^    def __init__(self):$/;"	kind:member	line:109
+__init__	IconRequests/modules/desktop.py	/^    def __init__(self):$/;"	kind:member	line:97
+__init__	IconRequests/modules/desktop.py	/^    def __init__(self, _file):$/;"	kind:member	line:11
+__init__	IconRequests/modules/settings.py	/^    def __init__(self):$/;"	kind:member	line:7
+__init__	IconRequests/modules/upload/imgur.py	/^    def __init__(self, settings):$/;"	kind:member	line:11
+__init__	IconRequests/widgets/application_row.py	/^    def __init__(self, desktop_file):$/;"	kind:member	line:18
+__init__	IconRequests/widgets/window.py	/^    def __init__(self, application):$/;"	kind:member	line:24
+__on_key_press	IconRequests/widgets/window.py	/^    def __on_key_press(self, widget, event):$/;"	kind:member	line:63
+__toggle_search	IconRequests/widgets/window.py	/^    def __toggle_search(self, *args):$/;"	kind:member	line:85
+about_dialog	IconRequests/application.py	/^    def about_dialog():$/;"	kind:member	line:100
+alive	IconRequests/application.py	/^    alive = True$/;"	kind:variable	line:16
+application.py	IconRequests/application.py	1;"	kind:file	line:1
+application_row.py	IconRequests/widgets/application_row.py	1;"	kind:file	line:1
+b64encode	IconRequests/modules/upload/imgur.py	/^from base64 import b64encode$/;"	kind:namespace	line:5
+cairo	IconRequests/utils.py	/^    import cairo$/;"	kind:namespace	line:12
+call	IconRequests/utils.py	/^from subprocess import Popen, PIPE, call$/;"	kind:namespace	line:6
+change_icon_name	IconRequests/utils.py	/^def change_icon_name(desktop_file, icon_name):$/;"	kind:function	line:39
+change_icon_name	IconRequests/widgets/application_row.py	/^from IconRequests.utils import get_icon, change_icon_name, copy_file, upload_icon$/;"	kind:namespace	line:7
+client_id	IconRequests/modules/upload.py	/^    def client_id(self):$/;"	kind:member	line:9
+client_id	IconRequests/modules/upload.py	/^    def client_id(self, client_id):$/;"	kind:member	line:13
+const.py	IconRequests/const.py	1;"	kind:file	line:1
+convert_svg2png	IconRequests/modules/upload.py	/^from IconRequests.utils import convert_svg2png$/;"	kind:namespace	line:2
+convert_svg2png	IconRequests/utils.py	/^def convert_svg2png(infile, outfile, w, h):$/;"	kind:function	line:80
+copy_file	IconRequests/utils.py	/^def copy_file(src, destination, overwrite=False):$/;"	kind:function	line:22
+copy_file	IconRequests/widgets/application_row.py	/^from IconRequests.utils import get_icon, change_icon_name, copy_file, upload_icon$/;"	kind:namespace	line:7
+copyfile	IconRequests/utils.py	/^from shutil import copyfile$/;"	kind:namespace	line:8
+db	IconRequests/widgets/window.py	/^    db = []$/;"	kind:variable	line:22
+desktop.py	IconRequests/modules/desktop.py	1;"	kind:file	line:1
+do_activate	IconRequests/application.py	/^    def do_activate(self, *args):$/;"	kind:member	line:72
+do_icon_uploaded	IconRequests/widgets/application_row.py	/^    def do_icon_uploaded(self, *args):$/;"	kind:member	line:136
+do_loaded	IconRequests/widgets/window.py	/^    def do_loaded(self, signal):$/;"	kind:member	line:142
+do_startup	IconRequests/application.py	/^    def do_startup(self):$/;"	kind:member	line:39
+env	IconRequests/utils.py	/^from os import listdir, path, getuid, environ as env$/;"	kind:namespace	line:1
+filter_func	IconRequests/widgets/window.py	/^    def filter_func(self, row, data, notify_destroy):$/;"	kind:member	line:95
+fix_hardcoded_icon	IconRequests/widgets/application_row.py	/^    def fix_hardcoded_icon(self, *args):$/;"	kind:member	line:97
+generate	IconRequests/widgets/application_row.py	/^    def generate(self):$/;"	kind:member	line:25
+generate_menu	IconRequests/application.py	/^    def generate_menu(self):$/;"	kind:member	line:43
+get_icon	IconRequests/utils.py	/^def get_icon(icon_path):$/;"	kind:function	line:110
+get_icon	IconRequests/widgets/application_row.py	/^from IconRequests.utils import get_icon, change_icon_name, copy_file, upload_icon$/;"	kind:namespace	line:7
+get_icon_informations	IconRequests/modules/desktop.py	/^    def get_icon_informations(self):$/;"	kind:member	line:58
+get_imgur_client_id	IconRequests/modules/settings.py	/^    def get_imgur_client_id(self):$/;"	kind:member	line:32
+get_is_night_mode	IconRequests/modules/settings.py	/^    def get_is_night_mode(self):$/;"	kind:member	line:29
+get_is_supported	IconRequests/modules/desktop.py	/^    def get_is_supported(self):$/;"	kind:member	line:51
+get_name	IconRequests/widgets/application_row.py	/^    def get_name(self):$/;"	kind:member	line:115
+get_supported_icons	IconRequests/const.py	/^from IconRequests.utils import get_supported_icons$/;"	kind:namespace	line:2
+get_supported_icons	IconRequests/utils.py	/^def get_supported_icons():$/;"	kind:function	line:52
+get_window_position	IconRequests/modules/settings.py	/^    def get_window_position(self):$/;"	kind:member	line:15
+getpwuid	IconRequests/utils.py	/^from pwd import getpwuid$/;"	kind:namespace	line:3
+getuid	IconRequests/utils.py	/^from os import listdir, path, getuid, environ as env$/;"	kind:namespace	line:1
+icon_name	IconRequests/modules/desktop.py	/^    def icon_name(self):$/;"	kind:member	line:18
+icon_name	IconRequests/modules/desktop.py	/^    def icon_name(self, icon_name):$/;"	kind:member	line:22
+imgur.py	IconRequests/modules/upload/imgur.py	1;"	kind:file	line:1
+ink_flag	IconRequests/utils.py	/^    ink_flag = call(['which', 'inkscape'], stdout=PIPE, stderr=PIPE)$/;"	kind:variable	line:15
+is_gnome	IconRequests/application.py	/^from IconRequests.utils import is_gnome$/;"	kind:namespace	line:8
+is_gnome	IconRequests/utils.py	/^def is_gnome():$/;"	kind:function	line:45
+is_hardcoded_icon	IconRequests/modules/desktop.py	/^    def is_hardcoded_icon(self):$/;"	kind:member	line:83
+listdir	IconRequests/modules/desktop.py	/^from os import path, listdir$/;"	kind:namespace	line:3
+listdir	IconRequests/utils.py	/^from os import listdir, path, getuid, environ as env$/;"	kind:namespace	line:1
+listdir	IconRequests/widgets/window.py	/^from os import path, listdir$/;"	kind:namespace	line:15
+load_icons_thread	IconRequests/const.py	/^load_icons_thread = Thread(target=run_thread())$/;"	kind:variable	line:14
+loads	IconRequests/widgets/application_row.py	/^from json import loads$/;"	kind:namespace	line:9
+logging	IconRequests/application.py	/^import logging$/;"	kind:namespace	line:10
+logging	IconRequests/modules/settings.py	/^import logging$/;"	kind:namespace	line:1
+logging	IconRequests/widgets/application_row.py	/^import logging$/;"	kind:namespace	line:5
+logging	IconRequests/widgets/window.py	/^import logging$/;"	kind:namespace	line:7
+name	IconRequests/modules/desktop.py	/^    def name(self):$/;"	kind:member	line:26
+name	IconRequests/modules/desktop.py	/^    def name(self, name):$/;"	kind:member	line:30
+new	IconRequests/modules/settings.py	/^    def new():$/;"	kind:member	line:10
+on_about	IconRequests/application.py	/^    def on_about(self, *args):$/;"	kind:member	line:110
+on_quit	IconRequests/application.py	/^    def on_quit(self, *args):$/;"	kind:member	line:119
+on_shortcuts	IconRequests/application.py	/^    def on_shortcuts(self, *args):$/;"	kind:member	line:81
+path	IconRequests/modules/desktop.py	/^from os import path, listdir$/;"	kind:namespace	line:3
+path	IconRequests/modules/upload.py	/^from os import path$/;"	kind:namespace	line:1
+path	IconRequests/modules/upload/imgur.py	/^from os import path$/;"	kind:namespace	line:4
+path	IconRequests/utils.py	/^from os import listdir, path, getuid, environ as env$/;"	kind:namespace	line:1
+path	IconRequests/widgets/application_row.py	/^from os import path$/;"	kind:namespace	line:6
+path	IconRequests/widgets/window.py	/^from os import path, listdir$/;"	kind:namespace	line:15
+read	IconRequests/modules/desktop.py	/^    def read(self):$/;"	kind:member	line:33
+report_missing_icon	IconRequests/widgets/application_row.py	/^    def report_missing_icon(self, *args):$/;"	kind:member	line:124
+requests	IconRequests/modules/upload/imgur.py	/^import requests$/;"	kind:namespace	line:1
+require_version	IconRequests/application.py	/^from gi import require_version$/;"	kind:namespace	line:4
+require_version	IconRequests/modules/desktop.py	/^from gi import require_version$/;"	kind:namespace	line:4
+require_version	IconRequests/utils.py	/^from gi import require_version$/;"	kind:namespace	line:2
+require_version	IconRequests/widgets/application_row.py	/^from gi import require_version$/;"	kind:namespace	line:1
+require_version	IconRequests/widgets/window.py	/^from gi import require_version$/;"	kind:namespace	line:3
+run	IconRequests/widgets/application_row.py	/^    def run(self):$/;"	kind:member	line:118
+run	IconRequests/widgets/window.py	/^    def run(self):$/;"	kind:member	line:115
+run_thread	IconRequests/const.py	/^def run_thread():$/;"	kind:function	line:10
+save_window_state	IconRequests/widgets/window.py	/^    def save_window_state(self):$/;"	kind:member	line:157
+set_is_night_mode	IconRequests/modules/settings.py	/^    def set_is_night_mode(self, statue):$/;"	kind:member	line:25
+set_window_postion	IconRequests/modules/settings.py	/^    def set_window_postion(self, position):$/;"	kind:member	line:19
+settings	IconRequests/const.py	/^settings = Settings.new()$/;"	kind:variable	line:8
+settings	IconRequests/widgets/window.py	/^from IconRequests.const import DESKTOP_FILE_DIRS, settings$/;"	kind:namespace	line:8
+settings.py	IconRequests/modules/settings.py	1;"	kind:file	line:1
+shortcuts_dialog	IconRequests/application.py	/^    def shortcuts_dialog():$/;"	kind:member	line:91
+show_window	IconRequests/widgets/window.py	/^    def show_window(self):$/;"	kind:member	line:111
+signal	IconRequests/application.py	/^import signal$/;"	kind:namespace	line:11
+upload	IconRequests/modules/upload/imgur.py	/^    def upload(self, image_path, title=None):$/;"	kind:member	line:15
+upload.py	IconRequests/modules/upload.py	1;"	kind:file	line:1
+upload_icon	IconRequests/modules/upload.py	/^    def upload_icon(self, icon_path, app_name=None):$/;"	kind:member	line:17
+upload_icon	IconRequests/widgets/application_row.py	/^from IconRequests.utils import get_icon, change_icon_name, copy_file, upload_icon$/;"	kind:namespace	line:7
+use_inkscape	IconRequests/utils.py	/^        use_inkscape = True$/;"	kind:variable	line:17
+use_inkscape	IconRequests/utils.py	/^    use_inkscape = False$/;"	kind:variable	line:13
+utils.py	IconRequests/utils.py	1;"	kind:file	line:1
+webbrowser	IconRequests/widgets/application_row.py	/^import webbrowser$/;"	kind:namespace	line:8
+win_object	IconRequests/application.py	/^    win_object = None$/;"	kind:variable	line:15
+window.py	IconRequests/widgets/window.py	1;"	kind:file	line:1

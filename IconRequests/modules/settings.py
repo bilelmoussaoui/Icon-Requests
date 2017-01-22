@@ -28,3 +28,6 @@ class Settings(Gio.Settings):
 
     def get_is_night_mode(self):
         return self.get_boolean('night-mode')
+
+    def get_imgur_client_id(self):
+        return self.get_string("imgur-client-id")

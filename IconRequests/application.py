@@ -43,19 +43,10 @@ class Application(Gtk.Application):
     def generate_menu(self):
         # Help section
         help_content = Gio.Menu.new()
-        if Gtk.get_major_version() >= 3 and Gtk.get_minor_version() >= 20:
-            help_content.append_item(Gio.MenuItem.new(
-                _("Shortcuts"), "app.shortcuts"))
-
         help_content.append_item(Gio.MenuItem.new(_("About"), "app.about"))
         help_content.append_item(Gio.MenuItem.new(_("Quit"), "app.quit"))
         help_section = Gio.MenuItem.new_section(None, help_content)
         self.menu.append_item(help_section)
-
-        if Gtk.get_major_version() >= 3 and Gtk.get_minor_version() >= 20:
-            action = Gio.SimpleAction.new("shortcuts", None)
-            action.connect("activate", self.on_shortcuts)
-            self.add_action(action)
 
         action = Gio.SimpleAction.new("about", None)
         action.connect("activate", self.on_about)
@@ -77,24 +68,6 @@ class Application(Gtk.Application):
             self.add_window(self.win)
         else:
             self.win_object.show_window()
-
-    def on_shortcuts(self, *args):
-        """
-            Shows keyboard shortcuts
-        """
-        shortcuts = Application.shortcuts_dialog()
-        if shortcuts:
-            shortcuts.set_transient_for(self.win)
-            shortcuts.show()
-
-    @staticmethod
-    def shortcuts_dialog():
-        if Gtk.get_major_version() >= 3 and Gtk.get_minor_version() >= 20:
-            builder = Gtk.Builder()
-            builder.add_from_resource('/org/gnome/IconRequests/shortcuts.ui')
-            shortcuts = builder.get_object("shortcuts")
-            return shortcuts
-        return None
 
     @staticmethod
     def about_dialog():

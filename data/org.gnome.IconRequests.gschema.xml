@@ -22,5 +22,10 @@
               Enable/disable night mode within the application
             </description>
         </key>
+        <key name="imgur-client-id" type="s">
+            <default>"01fb07fcc6cc0fe"</default>
+            <summary>imgur client id</summary>
+            <description>don't change that only if you have a proper one</description>
+        </key>
     </schema>
 </schemalist>

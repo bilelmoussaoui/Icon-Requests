@@ -5,14 +5,15 @@ require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, Gdk, GObject, GLib
 from gettext import gettext as _
 import logging
-from IconRequests.const import DESKTOP_FILE_DIRS
-from IconRequests.modules.settings import Settings
-from IconRequests.modules.desktop import DesktopFile, DesktopFileCorrupted, DesktopFileInvalid
-from IconRequests.widgets.headerbar import HeaderBar
-from IconRequests.widgets.search_bar import SearchBar
+from IconRequests.const import DESKTOP_FILE_DIRS, settings
+from IconRequests.utils import get_supported_icons
+from IconRequests.modules.upload.imgur import Imgur
+from IconRequests.modules.desktop import DesktopFile
+from IconRequests.widgets.notification import Notification
 from IconRequests.widgets.application_row import ApplicationRow
 from threading import Thread
-from os import path, listdir
+from os import path
+from glob import glob
 
 
 class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
@@ -24,14 +25,20 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
     def __init__(self, application):
         GObject.GObject.__init__(self)
         Thread.__init__(self)
-        self.settings = Settings.new()
+
+        self.upload_service = Imgur(settings)
 
         self.builder = Gtk.Builder.new_from_resource(
             "/org/gnome/IconRequests/mainwindow.ui")
         self.window = self.builder.get_object("MainWindow")
         self.window.connect("key-press-event", self.__on_key_press)
 
-        position_x, position_y = self.settings.get_window_position()
+        notification = self.builder.get_object("Notification")
+        notification_msg = self.builder.get_object("NotificationMessage")
+
+        self.notification = Notification(notification, notification_msg)
+
+        position_x, position_y = settings.get_window_position()
         if position_x and position_y:
             self.window.move(position_x, position_y)
         else:
@@ -57,6 +64,9 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
 
         self.main_stack.set_visible_child_name("loading")
         self.start()
+    
+    def emit(self, *args):
+        GLib.idle_add(GObject.GObject.emit, self, *args)
 
     def __on_key_press(self, widget, event):
         keyname = Gdk.keyval_name(event.keyval).lower()
@@ -94,7 +104,7 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
         """
             Filter function, used to check if the entered data exists on the application ListBox
         """
-        app_label = row.get_name()
+        app_label = row.desktop_file.getName()
         data = data.lower()
         if len(data) > 0:
             return data in app_label.lower()
@@ -112,45 +122,36 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
 
     def run(self):
         self.builder.get_object("loadingSpinner").start()
+        supported_icons = get_supported_icons()
         already_added = []
-        already_added_icons = []
         for desktop_dir in DESKTOP_FILE_DIRS:
             if path.isdir(desktop_dir):
-                all_files = listdir(desktop_dir)
+                all_files = glob("{0}*.desktop".format(desktop_dir))
                 for desktop_file in all_files:
-                    desktop_file_path = desktop_dir + desktop_file
-                    ext = path.splitext(desktop_file)[1].lower().strip(".")
-                    if ext == "desktop" and desktop_file not in already_added:
-                        try:
-                            desktop_file_obj = DesktopFile(desktop_file_path)
-                            icon_name = desktop_file_obj.icon_name
-                            if icon_name not in already_added_icons:
-                                self.db.append(desktop_file_obj)
-                                already_added_icons.append(icon_name)
-                            already_added.append(desktop_file)
-                        except DesktopFileCorrupted:
-                            logging.error(
-                                "Desktop file corrupted {0}".format(desktop_file))
-                        except DesktopFileInvalid:
-                            logging.debug(
-                                "Desktop file not displayed {0}".format(desktop_file))
-        self.db = sorted(self.db, key=lambda x: x.name.lower())
+                    obj = DesktopFile(desktop_file, self.upload_service, supported_icons)
+                    icon_name = obj.getIcon()
+                    if icon_name not in already_added:
+                        self.db.append(obj)
+                        already_added.append(icon_name)
+        self.db = sorted(self.db, key=lambda x: x.getName().lower())
         self.emit("loaded", True)
+        return False
 
     def do_loaded(self, signal):
         if signal:
             for desktop_file in self.db:
+                row = ApplicationRow(desktop_file, self.notification)
                 if desktop_file.is_hardcoded:
-                    self.hardcoded.add(ApplicationRow(desktop_file))
-                if not desktop_file.is_supported:
-                    self.unsupported.add(ApplicationRow(desktop_file))
-                self.all.add(ApplicationRow(desktop_file))
-
+                    self.hardcoded.add(row)
+                elif not desktop_file.is_supported:
+                    self.unsupported.add(row)
+                else:
+                    self.all.add(row)
+            self.builder.get_object("loadingSpinner").stop()
             self.main_stack.set_visible_child_name("applications")
             self.all.show_all()
             self.hardcoded.show_all()
             self.unsupported.show_all()
-            self.builder.get_object("loadingSpinner").stop()
 
     def save_window_state(self):
-        self.settings.set_window_postion(self.window.get_position())
+        settings.set_window_postion(self.window.get_position())

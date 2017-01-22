@@ -1,15 +1,11 @@
-from os import listdir, path, getuid, environ as env
+from os import path, environ as env
 from gi import require_version
-from pwd import getpwuid
+from io import BytesIO
+from subprocess import Popen, PIPE, call
+from shutil import copyfile
+from glob import glob
 require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gio, GLib
-from subprocess import Popen, PIPE, call
-from collections import OrderedDict
-from shutil import copyfile
-from IconRequests.modules.upload.imgur import imgur_upload_img
-from tempfile import NamedTemporaryFile
-from io import BytesIO
-from PIL import Image
 try:
     require_version('Rsvg', '2.0')
     from gi.repository import Rsvg
@@ -53,12 +49,6 @@ def is_gnome():
     return env.get("XDG_CURRENT_DESKTOP").lower() == "gnome"
 
 
-def get_user_destkop():
-    p = Popen(["xdg-user-dir", "DESKTOP"], stdout=PIPE, stderr=PIPE)
-    output, err = p.communicate()
-    return output.decode("utf-8").strip() + "/"
-
-
 def get_supported_icons():
     theme_name = Gio.Settings.new(
         "org.gnome.desktop.interface").get_string("icon-theme")
@@ -68,29 +58,28 @@ def get_supported_icons():
         '/usr/local/share/icons/{0}/'.format(theme_name),
         '/usr/share/icons/{0}/'.format(theme_name),
     ]
-    subdirs = [
-        "48x48/apps/",
-        "48x48/applications/",
-        "48/apps/",
-        "48/applications/",
-    ]
+    subdirs = []
+    icons_dirs = ["apps", "applications", "web"]
+    size_dirs = ["48", "48x48"]
+    for size in size_dirs:
+        for icon_dir in icons_dirs:
+            subdirs.append("{0}/{1}/".format(size, icon_dir))
     icons = []
+    extensions = [".svg" , ".png", ".xpm"]
     for icon_path in icons_paths:
         for icon_size in subdirs:
-            try:
-                icons = listdir(icon_path + icon_size)
-                for icon in icons:
-                    icon = path.splitext(icon)[0]
+            icons_dir = icon_path + icon_size
+            if path.exists(icons_dir):
+                for ext in extensions:
+                    folder_icons.extend(glob("{0}*{1}".format(icons_dir, ext)))
+                for icon in folder_icons:
+                    icon = path.basename(icon)
+                    for ext in extensions:
+                        icon = icon.replace(ext, "")
                     if icon not in icons:
                         icons.append(icon)
-            except FileNotFoundError:
-                pass
+            folder_icons = []
     return icons
-
-
-def get_username():
-    return getpwuid(getuid())[0]
-
 
 def convert_svg2png(infile, outfile, w, h):
     """
@@ -120,27 +109,6 @@ def convert_svg2png(infile, outfile, w, h):
         svg.close()
         png_io.close()
         img.finish()
-
-
-def upload_icon(icon_path, app_name):
-    icon_extension = path.splitext(icon_path)[1].lower().strip(".")
-    was_scaled = False
-    if icon_extension in ["svg", "png"]:
-        outfile = NamedTemporaryFile().name
-        if icon_extension == "svg":
-            convert_svg2png(icon_path, outfile, 48, 48)
-            icon_path = outfile
-            was_scaled = True
-            icon_extension = "png"
-        if icon_extension == "png":
-            if not was_scaled:
-                img = Image.open(icon_path)
-                img = img.resize((48, 48), Image.ANTIALIAS)
-                img.save(outfile, "PNG")
-                icon_path = outfile
-            icon_url = imgur_upload_img(icon_path, app_name)
-            return icon_url
-    return None
 
 
 def get_icon(icon_path):

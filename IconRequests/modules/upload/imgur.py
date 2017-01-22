@@ -1,9 +1,44 @@
-import pyimgur
-CLIENT_ID = "01fb07fcc6cc0fe"
-CLIENT_SECRET = "3b07f34ec00a9840cde6f6c2e2030138e3f9d430"
+import requests
+from IconRequests.modules.settings import Settings
+from IconRequests.modules.upload.upload import Upload, ConnexionError
+from os import path
+from base64 import b64encode
 
+UPLOAD_URI = "https://api.imgur.com/3/upload"
 
-def imgur_upload_img(file_path, icon_name):
-    img = pyimgur.Imgur(CLIENT_ID)
-    uploaded_img = img.upload_image(file_path, title=icon_name)
-    return uploaded_img.link
+class Imgur(Upload):
+
+    def __init__(self, settings):
+        super(Imgur, self).__init__()
+        self.client_id = settings.get_imgur_client_id()
+
+    def upload_icon(self, image_path, title=None):
+        if path.isfile(image_path):
+            with open(image_path, 'rb') as image_obj:
+                image_data = b64encode(image_obj.read())
+            image_obj.close()
+
+            headers = {
+                "Authorization": "Client-ID {0}".format(self.client_id),
+                "Accept": "application/json"
+            }
+            if not title:
+                title = path.basename(image_path)
+
+            data = {
+                "type": "base64",
+                "image": image_data,
+                "title": title
+            }
+            try:
+                query = requests.post(UPLOAD_URI, data, headers=headers)
+                if query.status_code == 200:
+                    return query.json()["data"]["link"]
+                else:
+                    raise ConnexionError
+                    return None
+            except requests.exceptions.ConnectionError:
+                raise ConnexionError
+                return None
+        else:
+            return None
