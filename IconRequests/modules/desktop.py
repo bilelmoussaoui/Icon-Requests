@@ -58,8 +58,6 @@ class DesktopFile(DesktopEntry):
         is_hardcoded = False
         if ext.lower() in img_exts or len(icon_path) > 1:
             is_hardcoded = True
-        if "-symbolic" in self.getIcon().lower():
-            is_hardcoded = True
         self.is_hardcoded = is_hardcoded
 
     def upload(self):

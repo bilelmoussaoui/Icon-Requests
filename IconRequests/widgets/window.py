@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-
-from gi import require_version
-require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gio, Gdk, GObject, GLib
 from gettext import gettext as _
 import logging
 from IconRequests.const import DESKTOP_FILE_DIRS, settings
-from IconRequests.utils import get_supported_icons
+from IconRequests.utils import (get_supported_icons, is_gnome, 
+                                is_app_menu)
 from IconRequests.modules.upload.imgur import Imgur
 from IconRequests.modules.desktop import DesktopFile
 from IconRequests.widgets.notification import Notification
@@ -14,22 +11,26 @@ from IconRequests.widgets.application_row import ApplicationRow
 from threading import Thread
 from os import path
 from glob import glob
+from gi import require_version
+require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gio, Gdk, GObject, GLib
 
 
-class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
+
+class Window(Gtk.ApplicationWindow, GObject.GObject):
     __gsignals__ = {
         'loaded': (GObject.SIGNAL_RUN_FIRST, None, (bool,))
     }
-    db = []
 
     def __init__(self, application):
         GObject.GObject.__init__(self)
-        Thread.__init__(self)
-
+        # Initiate the uploading server
         self.upload_service = Imgur(settings)
-
         self.builder = Gtk.Builder.new_from_resource(
             "/org/gnome/IconRequests/mainwindow.ui")
+        self.generate_window(application)
+
+    def generate_window(self, application):
         self.window = self.builder.get_object("MainWindow")
         self.window.connect("key-press-event", self.__on_key_press)
 
@@ -59,14 +60,40 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
         self.search_entry.set_width_chars(28)
         self.search_entry.connect("search-changed", self.__filter_applications)
 
+        self.menu_button = self.builder.get_object("PopoverMenuButton")
+        if not is_gnome() or is_app_menu():
+            self.menu_button.set_visible(True)
+            self.popover = Gtk.Popover.new_from_model(self.menu_button, application.menu)
+            self.popover.props.width_request = 200
+            self.menu_button.connect("clicked", self.show_menu_popover)
+
         self.revealer = self.builder.get_object("Revealer")
         self.search_list = [self.all, self.unsupported, self.hardcoded]
 
         self.main_stack.set_visible_child_name("loading")
+        # Watch the icon name gsettings
+        self.gsettings = Gio.Settings.new("org.gnome.desktop.interface")
+        self.gsettings.connect("changed", self.refresh_icons_view)
+        
         self.start()
-    
+
     def emit(self, *args):
         GLib.idle_add(GObject.GObject.emit, self, *args)
+
+    def refresh_icons_view(self, gsettings, key):
+        if key == "icon-theme":
+            self.main_stack.set_visible_child_name("loading")
+            for listbox in self.search_list:
+                for child in listbox.get_children():
+                    listbox.remove(child)
+            self.search_button.set_active(False)
+            self.search_entry.set_text("")
+            self.start()
+
+    def start(self):
+        thread = Thread(target=self.generate_apps_list)
+        thread.daemon = True
+        thread.start()
 
     def __on_key_press(self, widget, event):
         keyname = Gdk.keyval_name(event.keyval).lower()
@@ -116,13 +143,21 @@ class Window(Gtk.ApplicationWindow, Thread, GObject.GObject):
         for search_list in self.search_list:
             search_list.set_filter_func(self.filter_func, data, False)
 
+    def show_menu_popover(self, *args):
+        if self.popover:
+            if self.popover.get_visible():
+                self.popover.hide()
+            else:
+                self.popover.show_all()
+
     def show_window(self):
         self.window.show_all()
         self.window.present()
 
-    def run(self):
+    def generate_apps_list(self):
         self.builder.get_object("loadingSpinner").start()
         supported_icons = get_supported_icons()
+        self.db = []
         already_added = []
         for desktop_dir in DESKTOP_FILE_DIRS:
             if path.isdir(desktop_dir):

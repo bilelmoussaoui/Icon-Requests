@@ -11,7 +11,7 @@ try:
     from gi.repository import Rsvg
     import cairo
     use_inkscape = False
-except (ImportError, AttributeError):
+except (ImportError, AttributeError, ValueError):
     ink_flag = call(['which', 'inkscape'], stdout=PIPE, stderr=PIPE)
     if ink_flag == 0:
         use_inkscape = True
@@ -44,9 +44,23 @@ def change_icon_name(desktop_file, icon_name):
 
 def is_gnome():
     """
-        Check if the current distro is gnome
+        Check if the current desktop env is gnome
     """
-    return env.get("XDG_CURRENT_DESKTOP").lower() == "gnome"
+    return GLib.getenv("XDG_CURRENT_DESKTOP").lower() == "gnome"
+
+
+def is_app_menu():
+    """
+    Check if the top application menu is enabled or not.
+    """
+    default = True
+    try:
+        gsettings = Gio.Settings.new('org.gnome.settings-daemon.plugins.xsettings')
+        overrides = gsettings.get_value('overrides')['Gtk/ShellShowsAppMenu']
+        show_app_menu = not bool(GLib.Variant.new_int32(overrides))
+    except Exception:
+        show_app_menu = default
+    return show_app_menu
 
 
 def get_supported_icons():

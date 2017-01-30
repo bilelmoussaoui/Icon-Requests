@@ -20,11 +20,9 @@ class Settings(Gio.Settings):
         x, y = position
         self.set_int('position-x', x)
         self.set_int('position-y', y)
-        self.apply()
 
     def set_is_night_mode(self, statue):
         self.set_boolean('night-mode', statue)
-        self.apply()
 
     def get_is_night_mode(self):
         return self.get_boolean('night-mode')

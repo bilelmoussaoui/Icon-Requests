@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from IconRequests.widgets.window import Window
+from IconRequests.utils import is_gnome, is_app_menu
+from IconRequests.const import settings
+from gettext import gettext as _
+import logging
 from gi import require_version
 require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk, GObject
-from IconRequests.widgets.window import Window
-from IconRequests.utils import is_gnome
-from gettext import gettext as _
-import logging
-import signal
 
 
 class Application(Gtk.Application):
     win_object = None
-    alive = True
 
     def __init__(self):
         Gtk.Application.__init__(self,
@@ -21,6 +20,10 @@ class Application(Gtk.Application):
                                  flags=Gio.ApplicationFlags.FLAGS_NONE)
         GLib.set_application_name(_("Icon Requests"))
         GLib.set_prgname("Icon Requests")
+
+
+        Gtk.Settings.get_default().set_property(
+            "gtk-application-prefer-dark-theme", settings.get_is_night_mode())
 
         self.menu = Gio.Menu()
         cssProviderFile = Gio.File.new_for_uri(
@@ -43,10 +46,15 @@ class Application(Gtk.Application):
     def generate_menu(self):
         # Help section
         help_content = Gio.Menu.new()
+        help_content.append_item(Gio.MenuItem.new(_("Night Mode"), "app.night_mode"))
         help_content.append_item(Gio.MenuItem.new(_("About"), "app.about"))
         help_content.append_item(Gio.MenuItem.new(_("Quit"), "app.quit"))
         help_section = Gio.MenuItem.new_section(None, help_content)
         self.menu.append_item(help_section)
+
+        action = Gio.SimpleAction.new_stateful("night_mode", None, GLib.Variant.new_boolean(settings.get_is_night_mode()))
+        action.connect("change-state", self.on_night_mode)
+        self.add_action(action)
 
         action = Gio.SimpleAction.new("about", None)
         action.connect("activate", self.on_about)
@@ -56,7 +64,7 @@ class Application(Gtk.Application):
         action.connect("activate", self.on_quit)
         self.add_action(action)
 
-        if is_gnome():
+        if is_gnome() and not is_app_menu():
             self.set_app_menu(self.menu)
             logging.debug("Adding gnome shell menu")
 
@@ -68,6 +76,14 @@ class Application(Gtk.Application):
             self.add_window(self.win)
         else:
             self.win_object.show_window()
+    
+    def on_night_mode(self, action, gvariant):
+        is_night_mode = not settings.get_is_night_mode()
+        action.set_state(GLib.Variant.new_boolean(is_night_mode))
+        settings.set_is_night_mode(is_night_mode)
+        Gtk.Settings.get_default().set_property(
+            "gtk-application-prefer-dark-theme", is_night_mode)
+    
 
     @staticmethod
     def about_dialog():
@@ -94,8 +110,6 @@ class Application(Gtk.Application):
         Close the application, stops all threads
         and clear clipboard for safety reasons
         """
-        self.alive = False
-        signal.signal(signal.SIGINT, lambda x, y: self.alive)
         if self.win:
             self.win_object.save_window_state()
             self.win.destroy()
