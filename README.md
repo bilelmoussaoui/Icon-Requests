@@ -5,6 +5,13 @@ A Gtk application to report missing icons to your current theme github repositor
 <img src="screenshots/screenshot1.png" width="280" /> <img src="screenshots/screenshot2.png" width="280"/> <img src="screenshots/screenshot3.png"  width="280" />
 
 
+### Install
+- Archlinux (AUR):
+```bash
+yaourt -S icon-requests
+```
+
+
 ### Build from source code
 1 - Clone the repository
 ```bash
