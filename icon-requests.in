@@ -1,34 +1,33 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-from gi import require_version
-require_version("Gtk", "3.0")
-from gi.repository import Gtk
-import sys
-sys.path.insert(1, '@pyexecdir@')
-sys.path.insert(1, '@pythondir@')
-from gi.repository import Gio
 import logging
+import signal
 import locale
 import gettext
-_ = gettext.gettext
 import argparse
 import faulthandler
-from os import path, environ as env
+import sys
+from os import path
+from gi import require_version
+require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gio
+
+sys.path.insert(1, '@pyexecdir@')
+sys.path.insert(1, '@pythondir@')
+
 from IconRequests.application import Application
+
 if __name__ == "__main__":
+    _ = gettext.gettext
 
     locale.bindtextdomain('icon-requests', "@localedir@")
     locale.textdomain('icon-requests')
     gettext.bindtextdomain('icon-requests', "@localedir@")
     gettext.textdomain('icon-requests')
 
-    env["DATA_DIR"] = "@pkgdatadir@"
-    env["LOCALE_DIR"] = "@localedir@"
-
     parser = argparse.ArgumentParser(prog="Icon Requests")
     parser.add_argument("--debug", "-d", action="store_true",
-                        help=_("start in debug mode"))
+                        help=_("Start in debug mode"))
     parser.add_argument("--version", "-v", action="store_true",
                         help=_("Icon Requests version number"))
     parser.add_argument("--about", action="store_true",
@@ -55,5 +54,10 @@ if __name__ == "__main__":
         sys.exit()
     else:
         app = Application()
-        exit_status = app.run(None)
-        sys.exit(exit_status)
+        try:
+            exit_status = app.run(None)
+            signal.signal(signal.SIGTERM, app.on_quit)
+            signal.signal(signal.SIGINT, app.on_quit)
+            sys.exit(exit_status)
+        except KeyboardInterrupt:
+            app.on_quit()

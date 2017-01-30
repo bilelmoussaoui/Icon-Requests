@@ -1,0 +1,69 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: icon-requests\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-30 23:31+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: IconRequests/application.py:21 data/icon-requests.desktop.in:3
+msgid "Icon Requests"
+msgstr ""
+
+#: IconRequests/application.py:49
+msgid "Night Mode"
+msgstr ""
+
+#: IconRequests/application.py:50
+msgid "About"
+msgstr ""
+
+#: IconRequests/application.py:51
+msgid "Quit"
+msgstr ""
+
+#: IconRequests/widgets/application_row.py:68
+msgid "Report"
+msgstr ""
+
+#: IconRequests/widgets/application_row.py:81
+msgid "Fix"
+msgstr ""
+
+#: IconRequests/widgets/application_row.py:125
+msgid "Please check your connexion"
+msgstr ""
+
+#: IconRequests/widgets/application_row.py:147
+msgid "Theme not supported"
+msgstr ""
+
+#: data/icon-requests.desktop.in:4
+msgid "Missing Icon Requests"
+msgstr ""
+
+#: data/icon-requests.desktop.in:5
+msgid "Report Missing icons to your current theme"
+msgstr ""
+
+#: data/icon-requests.desktop.in:10
+msgid "Gnome;GTK;Verification;"
+msgstr ""
+
+#: data/icon-requests.desktop.in:11
+msgid "icon-requests"
+msgstr ""
+
+#: data/icon-requests.desktop.in:20
+msgid "About Icon Requests"
+msgstr ""
