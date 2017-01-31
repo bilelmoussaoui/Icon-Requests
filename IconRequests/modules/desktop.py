@@ -39,7 +39,7 @@ class DesktopFile(DesktopEntry):
         if self.is_hardcoded:
             self.icon_path = icon_name
             if len(self.icon_path.split("/")) == 1:
-                icon_nget_issues_listame = path.splitext(self.getIcon())[0]
+                icon_name = path.splitext(self.getIcon())[0]
             else:
                 self.icon_path = self.getIcon()
                 full_path = True
