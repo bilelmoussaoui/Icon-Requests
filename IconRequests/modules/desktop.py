@@ -51,8 +51,10 @@ class DesktopFile(DesktopEntry):
                 self.is_supported = True
 
         if not self.icon_path or not path.exists(self.icon_path):
-            self.icon_path = theme.lookup_icon(
-                "image-missing", 48, 0).get_filename()
+            icon = theme.lookup_icon(
+                "image-missing", 48, 0)
+            if icon:
+                self.icon_path = icon.get_filename()
 
     def is_hardcoded_icon(self):
         img_exts = ["png", "svg", "xpm"]
@@ -75,12 +77,16 @@ class DesktopFile(DesktopEntry):
         issue_url = None
         app_name = self.getName().lower()
         app_icon = self.icon_path
-        for issue in issues_list:
-            title = issue.get("title", "").lower()
-            body = issue.get("body", "")
-            if app_icon in body or app_name in title or app_name in body.lower():
-                issue_url = issue["html_url"]
-                break
+        if len(issues_list) > 0 and issues_list[0].get("message", None):
+            raise APIRateLimit
+            return False
+        else:
+            for issue in issues_list:
+                title = issue.get("title", "").lower()
+                body = issue.get("body", "")
+                if app_icon in body or app_name in title or app_name in body.lower():
+                    issue_url = issue["html_url"]
+                    break
         if not issue_url:
             self.icon_url = self.upload_service.upload(self.icon_path, self.getName())
             return True
@@ -113,6 +119,12 @@ class DesktopFile(DesktopEntry):
             Gio.app_info_launch_default_for_uri(url)
         else:
             raise ThemeNotSupported
+
+
+class APIRateLimit(Exception):
+
+    def __init__(self):
+        super(APIRateLimit, self).__init__()
 
 
 class ThemeNotSupported(Exception):

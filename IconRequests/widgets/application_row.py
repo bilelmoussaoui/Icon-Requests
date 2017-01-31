@@ -5,7 +5,7 @@ from gettext import gettext as _
 import logging
 from os import path
 from IconRequests.modules.upload.upload import ConnexionError
-from IconRequests.modules.desktop import ThemeNotSupported
+from IconRequests.modules.desktop import ThemeNotSupported, APIRateLimit
 from IconRequests.utils import get_icon, change_icon_name, copy_file
 from threading import Thread
 
@@ -121,11 +121,17 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
             upload_status = self.desktop_file.upload()
             self.emit("icon_uploaded", upload_status)
         except ConnexionError:
-            self.emit("icon_uploaded", False)
             self.notification.set_message(_("Please check your connexion"))
             self.notification.set_type(Gtk.MessageType.ERROR)
             self.notification.show()
-
+        except ThemeNotSupported:
+            self.notification.set_message(_("Theme not supported"))
+            self.notification.set_type(Gtk.MessageType.ERROR)
+            self.notification.show()
+        except APIRateLimit:
+            self.notification.set_message(_("You've reached your API limits"))
+            self.notification.set_type(Gtk.MessageType.INFO)
+            self.notification.show()
 
     def report_missing_icon(self, *args):
         self.report_button.set_sensitive(False)
