@@ -1,5 +1,8 @@
 from os import path, environ as env
 from gi import require_version
+import requests
+from urllib.parse import urlencode
+from IconRequests.const import ISSUES_PER_PAGE, NB_PAGES
 from io import BytesIO
 from subprocess import Popen, PIPE, call
 from shutil import copyfile
@@ -79,6 +82,7 @@ def get_supported_icons():
         for icon_dir in icons_dirs:
             subdirs.append("{0}/{1}/".format(size, icon_dir))
     icons = []
+    folder_icons = []
     extensions = [".svg" , ".png", ".xpm"]
     for icon_path in icons_paths:
         for icon_size in subdirs:
@@ -135,3 +139,21 @@ def get_icon(icon_path):
     if icon.get_width() != 48 or icon.get_height() != 48:
         icon = icon.scale_simple(48, 48, GdkPixbuf.InterpType.BILINEAR)
     return icon
+
+
+def get_issues_list(repository):
+    """
+        Get a list of open issues on a repository.
+    """
+    issues_list = []
+    url_data = {
+        "state" : "open",
+        "per_page": str(ISSUES_PER_PAGE),
+        "page" : "1"
+    }
+    base_uri = "https://api.github.com/repos/{0}/issues?".format(repository)
+    for page in range(1, NB_PAGES + 1):
+        url_data["page"] = str(page)
+        query = requests.get(base_uri + urlencode(url_data))
+        issues_list.extend(query.json())
+    return issues_list

@@ -14,50 +14,51 @@ from gi.repository import Gtk, Gio
 
 sys.path.insert(1, '@pyexecdir@')
 sys.path.insert(1, '@pythondir@')
-
+# Load the gresource file first.
+resource = Gio.resource_load(path.join('@DATADIR@',
+                                       'icon-requests.gresource'))
+Gio.Resource._register(resource)
 from IconRequests.application import Application
 
-if __name__ == "__main__":
-    _ = gettext.gettext
+_ = gettext.gettext
 
-    locale.bindtextdomain('icon-requests', "@localedir@")
-    locale.textdomain('icon-requests')
-    gettext.bindtextdomain('icon-requests', "@localedir@")
-    gettext.textdomain('icon-requests')
+locale.bindtextdomain('icon-requests', "@localedir@")
+locale.textdomain('icon-requests')
+gettext.bindtextdomain('icon-requests', "@localedir@")
+gettext.textdomain('icon-requests')
 
-    parser = argparse.ArgumentParser(prog="Icon Requests")
-    parser.add_argument("--debug", "-d", action="store_true",
-                        help=_("Start in debug mode"))
-    parser.add_argument("--version", "-v", action="store_true",
-                        help=_("Icon Requests version number"))
-    parser.add_argument("--about", action="store_true",
-                        help=_("Show about dialog"))
-    args = parser.parse_args()
+parser = argparse.ArgumentParser(prog="Icon Requests")
+parser.add_argument("--debug", "-d", action="store_true",
+                    help=_("Start in debug mode"))
+parser.add_argument("--version", "-v", action="store_true",
+                    help=_("Icon Requests version number"))
+parser.add_argument("--about", action="store_true",
+                    help=_("Show about dialog"))
+args = parser.parse_args()
 
-    level = logging.ERROR
-    if args.debug:
-        level = logging.DEBUG
-        faulthandler.enable()
-    logging.basicConfig(level=level,
-                        format='[%(levelname)s] - %(asctime)s - %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S')
+level = logging.ERROR
+if args.debug:
+    level = logging.DEBUG
+    faulthandler.enable()
+logging.basicConfig(level=level,
+                    format='[%(levelname)s] - %(asctime)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
-    resource = Gio.resource_load(path.join('@DATADIR@',
-                                           'icon-requests.gresource'))
-    Gio.Resource._register(resource)
-    if args.version:
-        sys.exit("Version : @VERSION@")
-    elif args.about:
-        about_dialog = Application.about_dialog()
-        about_dialog.run()
-        about_dialog.destroy()
-        sys.exit()
-    else:
-        app = Application()
-        try:
-            exit_status = app.run(None)
-            signal.signal(signal.SIGTERM, app.on_quit)
-            signal.signal(signal.SIGINT, app.on_quit)
-            sys.exit(exit_status)
-        except KeyboardInterrupt:
-            app.on_quit()
+
+
+if args.version:
+    sys.exit("Version : @VERSION@")
+elif args.about:
+    about_dialog = Application.about_dialog()
+    about_dialog.run()
+    about_dialog.destroy()
+    sys.exit()
+else:
+    app = Application()
+    try:
+        exit_status = app.run(None)
+        signal.signal(signal.SIGTERM, app.on_quit)
+        signal.signal(signal.SIGINT, app.on_quit)
+        sys.exit(exit_status)
+    except KeyboardInterrupt:
+        app.on_quit()

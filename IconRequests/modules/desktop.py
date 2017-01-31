@@ -1,3 +1,5 @@
+from IconRequests.utils import get_issues_list
+from IconRequests.const import repositories
 from xdg.DesktopEntry import DesktopEntry
 from os import path, listdir
 from json import loads
@@ -16,6 +18,7 @@ class DesktopFile(DesktopEntry):
         self.desktop_file = path.basename(_file)
         self.supported_icons = supported_icons
         self.path = _file.replace(self.desktop_file, "")
+        self.issue_url = None
         self.get_icon_informations()
 
     def get_is_supported(self):
@@ -36,7 +39,7 @@ class DesktopFile(DesktopEntry):
         if self.is_hardcoded:
             self.icon_path = icon_name
             if len(self.icon_path.split("/")) == 1:
-                icon_name = path.splitext(self.getIcon())[0]
+                icon_nget_issues_listame = path.splitext(self.getIcon())[0]
             else:
                 self.icon_path = self.getIcon()
                 full_path = True
@@ -62,21 +65,38 @@ class DesktopFile(DesktopEntry):
 
     def upload(self):
         """ Upload the missing icon to the current image service"""
-        self.icon_url = self.upload_service.upload(self.icon_path, self.getName())
+        theme = Gio.Settings.new("org.gnome.desktop.interface").get_string("icon-theme")
+        try:
+            repo = repositories.get_repo(theme)
+        except KeyError:
+            raise ThemeNotSupported
+            return False
+        issues_list = get_issues_list(repo)
+        issue_url = None
+        app_name = self.getName().lower()
+        app_icon = self.icon_path
+        for issue in issues_list:
+            title = issue.get("title", "").lower()
+            body = issue.get("body", "")
+            if app_icon in body or app_name in title or app_name in body.lower():
+                issue_url = issue["html_url"]
+                break
+        if not issue_url:
+            self.icon_url = self.upload_service.upload(self.icon_path, self.getName())
+            return True
+        else:
+            Gio.app_info_launch_default_for_uri(issue_url)
+            return False
 
     def report(self):
         # TODO : use glib instead of wewbbrowser
         theme = Gio.Settings.new(
             "org.gnome.desktop.interface").get_string("icon-theme")
-        repos_obj = Gio.File.new_for_uri(
-            'resource:///org/gnome/IconRequests/repos.json')
-        repositories = loads(str(repos_obj.load_contents(None)
-                                 [1].decode("utf-8")))
-        if theme in repositories.keys():
+        if repositories.is_supported(theme):
             issue_model_obj = Gio.File.new_for_uri(
                 'resource:///org/gnome/IconRequests/issue.model')
             issue_model = str(issue_model_obj.load_contents(None)[1].decode("utf-8"))
-            repo_url = repositories[theme]
+            repo_url = repositories.get_url(theme)
             issue_title = "Icon Request : %s" % self.getName()
             issue_model = issue_model.replace(
                 "{app.name}", self.getName())

@@ -118,8 +118,8 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
 
     def run(self):
         try:
-            self.desktop_file.upload()
-            self.emit("icon_uploaded", True)
+            upload_status = self.desktop_file.upload()
+            self.emit("icon_uploaded", upload_status)
         except ConnexionError:
             self.emit("icon_uploaded", False)
             self.notification.set_message(_("Please check your connexion"))
