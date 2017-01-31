@@ -117,9 +117,9 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
         GLib.idle_add(GObject.GObject.emit, self, *args)
 
     def run(self):
+        upload_status = False
         try:
             upload_status = self.desktop_file.upload()
-            self.emit("icon_uploaded", upload_status)
         except ConnexionError:
             self.notification.set_message(_("Please check your connexion"))
             self.notification.set_type(Gtk.MessageType.ERROR)
@@ -132,6 +132,7 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
             self.notification.set_message(_("You've reached your API limits"))
             self.notification.set_type(Gtk.MessageType.INFO)
             self.notification.show()
+        self.emit("icon_uploaded", upload_status)
 
     def report_missing_icon(self, *args):
         self.report_button.set_sensitive(False)

@@ -1,4 +1,3 @@
-from IconRequests.utils import get_issues_list
 from IconRequests.const import repositories
 from xdg.DesktopEntry import DesktopEntry
 from os import path, listdir
@@ -10,10 +9,11 @@ from gi.repository import Gtk, Gio, GLib
 
 class DesktopFile(DesktopEntry):
 
-    def __init__(self, _file, upload_service, supported_icons):
+    def __init__(self, _file, upload_service, supported_icons, issues_list):
         if not path.exists(_file):
             raise DesktopFileNotFound
         DesktopEntry.__init__(self, filename=_file)
+        self.issues_list = issues_list
         self.upload_service = upload_service
         self.desktop_file = path.basename(_file)
         self.supported_icons = supported_icons
@@ -67,32 +67,25 @@ class DesktopFile(DesktopEntry):
 
     def upload(self):
         """ Upload the missing icon to the current image service"""
-        theme = Gio.Settings.new("org.gnome.desktop.interface").get_string("icon-theme")
-        try:
-            repo = repositories.get_repo(theme)
-        except KeyError:
-            raise ThemeNotSupported
-            return False
-        issues_list = get_issues_list(repo)
         issue_url = None
         app_name = self.getName().lower()
-        app_icon = self.icon_path
-        if len(issues_list) > 0 and issues_list[0].get("message", None):
+        app_icon = self.getIcon()
+        if isinstance(self.issues_list[0], str):
             raise APIRateLimit
             return False
         else:
-            for issue in issues_list:
+            for issue in self.issues_list:
                 title = issue.get("title", "").lower()
                 body = issue.get("body", "")
-                if app_icon in body or app_name in title or app_name in body.lower():
+                if app_icon in body or app_name in title:
                     issue_url = issue["html_url"]
                     break
-        if not issue_url:
-            self.icon_url = self.upload_service.upload(self.icon_path, self.getName())
-            return True
-        else:
-            Gio.app_info_launch_default_for_uri(issue_url)
-            return False
+            if not issue_url:
+                self.icon_url = self.upload_service.upload(self.icon_path, self.getName())
+                return True
+            else:
+                Gio.app_info_launch_default_for_uri(issue_url)
+                return False
 
     def report(self):
         # TODO : use glib instead of wewbbrowser

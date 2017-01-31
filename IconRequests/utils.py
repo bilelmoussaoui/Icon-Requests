@@ -77,10 +77,11 @@ def get_supported_icons():
     ]
     subdirs = []
     icons_dirs = ["apps", "applications", "web"]
-    size_dirs = ["48", "48x48"]
+    size_dirs = ["48", "48x48", "scalable"]
     for size in size_dirs:
         for icon_dir in icons_dirs:
             subdirs.append("{0}/{1}/".format(size, icon_dir))
+            subdirs.append("{0}/{1}/".format(icon_dir, size))
     icons = []
     folder_icons = []
     extensions = [".svg" , ".png", ".xpm"]

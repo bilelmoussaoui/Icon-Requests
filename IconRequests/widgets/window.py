@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from gettext import gettext as _
 import logging
-from IconRequests.const import DESKTOP_FILE_DIRS, settings
+from IconRequests.const import DESKTOP_FILE_DIRS, settings, repositories
 from IconRequests.utils import (get_supported_icons, is_gnome, 
-                                is_app_menu)
+                                is_app_menu, get_issues_list)
 from IconRequests.modules.upload.imgur import Imgur
 from IconRequests.modules.desktop import DesktopFile
 from IconRequests.widgets.notification import Notification
@@ -157,13 +157,22 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
     def generate_apps_list(self):
         self.builder.get_object("loadingSpinner").start()
         supported_icons = get_supported_icons()
+        theme = Gio.Settings.new("org.gnome.desktop.interface").get_string("icon-theme")
+        repo = None
+        try:
+            repo = repositories.get_repo(theme)
+        except KeyError:
+            pass
+        issues_list = []
+        if repo:
+            issues_list = get_issues_list(repo)
         self.db = []
         already_added = []
         for desktop_dir in DESKTOP_FILE_DIRS:
             if path.isdir(desktop_dir):
                 all_files = glob("{0}*.desktop".format(desktop_dir))
                 for desktop_file in all_files:
-                    obj = DesktopFile(desktop_file, self.upload_service, supported_icons)
+                    obj = DesktopFile(desktop_file, self.upload_service, supported_icons, issues_list)
                     icon_name = obj.getIcon()
                     if icon_name not in already_added:
                         self.db.append(obj)

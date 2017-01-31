@@ -39,6 +39,10 @@
       "ePapirus":{  
          "url":"https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
          "repo":"PapirusDevelopmentTeam/papirus-icon-theme"
+      },
+      "la-capitaine-icon-theme":{
+          "url": "https://github.com/keeferrourke/la-capitaine-icon-theme",
+          "repo": "keeferrourke/la-capitaine-icon-theme"
       }
    },
    "reposlist":[  
@@ -51,6 +55,7 @@
       "Papirus-Dark",
       "Papirus-Light",
       "Papirus",
-      "ePapirus"
+      "ePapirus",
+      "la-capitaine-icon-theme"
    ]
 }
