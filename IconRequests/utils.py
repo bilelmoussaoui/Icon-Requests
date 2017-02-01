@@ -1,6 +1,7 @@
-from os import path, environ as env
+from os import path, makedirs, remove
 from gi import require_version
 import requests
+import json
 from urllib.parse import urlencode
 from IconRequests.const import ISSUES_PER_PAGE, NB_PAGES
 from io import BytesIO
@@ -146,6 +147,10 @@ def get_issues_list(repository):
     """
         Get a list of open issues on a repository.
     """
+    cache_dir = path.join(GLib.get_user_cache_dir(), "IconRequests", "")
+    cache_file = path.join(cache_dir, "{0}.json".format(repository.replace("/", "-")))
+    if not path.exists(cache_dir):
+        makedirs(cache_dir)
     issues_list = []
     url_data = {
         "state" : "open",
@@ -155,6 +160,21 @@ def get_issues_list(repository):
     base_uri = "https://api.github.com/repos/{0}/issues?".format(repository)
     for page in range(1, NB_PAGES + 1):
         url_data["page"] = str(page)
-        query = requests.get(base_uri + urlencode(url_data))
-        issues_list.extend(query.json())
+        try:
+            query = requests.get(base_uri + urlencode(url_data), timeout=0.05)
+            issues_list.extend(query.json())
+        except requests.exceptions.ConnectionError:
+            issues_list = []
+            break
+    if len(issues_list) != 0 and not isinstance(issues_list[0], str):
+        if path.exists(cache_file):
+            remove(cache_file)
+        with open(cache_file, 'w') as file_object:
+            json.dump(issues_list, file_object, sort_keys=True, indent=4)
+        file_object.close()
+    else:
+        if path.exists(cache_file):
+            with open(cache_file, 'r') as file_object:
+                issues_list = json.load(file_object)
+            file_object.close()
     return issues_list

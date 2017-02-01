@@ -88,3 +88,4 @@ ENV/
 .ropeproject
 *.ui~
 .idea/
+tags

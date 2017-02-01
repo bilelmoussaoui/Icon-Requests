@@ -1,4 +1,3 @@
-import logging
 from gi.repository import Gio, GLib
 
 
@@ -6,15 +5,14 @@ class Settings(Gio.Settings):
 
     def __init__(self):
         Gio.Settings.__init__(self)
-
+    
     def new():
         gsettings = Gio.Settings.new("org.gnome.IconRequests")
         gsettings.__class__ = Settings
         return gsettings
 
     def get_window_position(self):
-        x, y = tuple(self.get_value('window-position'))
-        return x, y
+        return tuple(self.get_value('window-position'))
 
     def set_window_postion(self, position):
         position = GLib.Variant('ai', list(position))

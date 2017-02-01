@@ -31,7 +31,7 @@ class Imgur(Upload):
                 "title": title
             }
             try:
-                query = requests.post(UPLOAD_URI, data, headers=headers)
+                query = requests.post(UPLOAD_URI, data, headers=headers, timeout=0.05)
                 if query.status_code == 200:
                     return query.json()["data"]["link"]
                 else:
