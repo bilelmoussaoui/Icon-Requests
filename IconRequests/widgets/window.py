@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from gettext import gettext as _
 import logging
-from IconRequests.const import DESKTOP_FILE_DIRS, settings, repositories
+from IconRequests.const import DESKTOP_FILE_DIRS, settings, repositories, ICONS_IGNORE_LIST
 from IconRequests.utils import (get_supported_icons, is_gnome, 
                                 is_app_menu, get_issues_list)
 from IconRequests.modules.upload.imgur import Imgur
@@ -174,7 +174,7 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
                 for desktop_file in all_files:
                     obj = DesktopFile(desktop_file, self.upload_service, supported_icons, issues_list)
                     icon_name = obj.getIcon()
-                    if icon_name not in already_added:
+                    if icon_name not in already_added and icon_name not in ICONS_IGNORE_LIST:
                         self.db.append(obj)
                         already_added.append(icon_name)
         self.db = sorted(self.db, key=lambda x: x.getName().lower())

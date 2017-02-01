@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
     <schema path="/org/gnome/IconRequests/" id="org.gnome.IconRequests" gettext-domain="IconRequests">
-        <key name="position-x" type="i">
-            <default>0</default>
-            <summary>Default window postiton on x axes</summary>
+        <key name="window-position" type="ai">
+            <default>[0,0]</default>
+            <summary>Default window postiton</summary>
             <description>
-                Default window postiton on x axes
-            </description>
-        </key>
-        <key name="position-y" type="i">
-            <default>0</default>
-            <summary>Default window postiton on y axes</summary>
-            <description>
-                Default window postiton on y axes
+                Default window postiton
             </description>
         </key>
         <key name="night-mode" type="b">

@@ -5,7 +5,7 @@ SUPPORTED_ICONS = []
 
 settings = Settings.new()
 repositories = Repositories()
-
+ICONS_IGNORE_LIST = [""]
 # This is only needed for verifing if the issue already exists!
 # Which means that the application will fetch the latest 400 open issues.
 ISSUES_PER_PAGE = 100
