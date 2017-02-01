@@ -19,11 +19,12 @@ yaourt -S icon-requests
 git clone https://github.com/bil-elmoussaoui/Icon-Requests && cd ./Icon-Requests
 ```
 2 - Install dependecies
-  - meson (git version for now)
+  - meson
   - requests
   - python3-cairosvg or inkscape
   - Pillow
-
+  - ninja
+ 
 3 - Build the application
 ```bash
 mkdir build && cd ./build
