@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/bil-elmoussaoui/Icon-Requests.svg?branch=master)](https://travis-ci.org/bil-elmoussaoui/Icon-Requests)
 # Icon Requests
 A Gtk application to report missing icons to your current theme github repository
 
