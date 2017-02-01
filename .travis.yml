@@ -10,8 +10,7 @@ python:
 install: 
   - "sudo apt-get -y update"
   - "sudo apt-get install -y git python-gobject ninja python3-cairosvg python3-gi"
-  - "git clone https://github.com/mesonbuild/meson && cd ./meson && sudo python setup.py install"
-  - "sudo pip install requests Pillow"
+  - "sudo pip install requests Pillow meson"
   - "git clone https://github.com/bil-elmoussaoui/Icon-Requests && cd ./Icon-Requests && mkdir build && cd ./build && meson .. && ninja && sudo ninja install"
 before_script:
   - "export DISPLAY=:99.0"
