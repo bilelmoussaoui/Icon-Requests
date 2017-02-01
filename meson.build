@@ -17,7 +17,7 @@ py3 = find_program('python3')
 glib = dependency('glib-2.0')
 gobject = dependency('gobject-2.0')
 gir = dependency('gobject-introspection-1.0')
-gtk = dependency('gtk+-3.0', version : '>=3.16')
+gtk = dependency('gtk+-3.0', version : '>=3.14')
 
 message('Getting python install dir')
 r = run_command(py3, '-c', 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')
