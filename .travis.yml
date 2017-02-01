@@ -7,7 +7,7 @@ python:
   - "3.6"
 install: 
   - "sudo apt-get -y update"
-  - "sudo apt-get install -y git python-gobject"
+  - "sudo apt-get install -y git python-gobject ninja"
   - "git clone https://github.com/mesonbuild/meson && cd ./meson && python3 setup.py install"
   - "pip install requests cairosvg Pillow"
   - "git clone https://github.com/bil-elmoussaoui/Icon-Requests && cd ./Icon-Requests && mkdir build && cd ./build && ninja && sudo ninja install"
