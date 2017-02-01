@@ -7,8 +7,8 @@ python:
   - "3.5"
   - "3.6"
 install: 
-  - "apt-get -y update"
-  - "apt-get install -y git python-gobject ninja python3-cairosvg python3-gi python3-pip python-dev"
+  - "sudo apt-get -y update"
+  - "sudo apt-get install -y git python-gobject ninja python3-cairosvg python3-gi python3-pip python-dev"
   - "pip3 install requests Pillow meson"
   - "git clone https://github.com/bil-elmoussaoui/Icon-Requests && cd ./Icon-Requests && mkdir build && cd ./build && meson .. && ninja && ninja install"
 before_script:
