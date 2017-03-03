@@ -2,7 +2,7 @@
 from gettext import gettext as _
 import logging
 from IconRequests.const import DESKTOP_FILE_DIRS, settings, repositories, ICONS_IGNORE_LIST
-from IconRequests.utils import (get_supported_icons, is_gnome, 
+from IconRequests.utils import (get_supported_icons, is_gnome,
                                 is_app_menu, get_issues_list)
 from IconRequests.modules.upload.imgur import Imgur
 from IconRequests.modules.desktop import DesktopFile
@@ -27,7 +27,7 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
         # Initiate the uploading server
         self.upload_service = Imgur(settings)
         self.builder = Gtk.Builder.new_from_resource(
-            "/org/gnome/IconRequests/mainwindow.ui")
+            "/org/gnome/IconRequests/ui/mainwindow.ui")
         self.generate_window(application)
 
     def generate_window(self, application):
@@ -74,7 +74,7 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
         # Watch the icon name gsettings
         self.gsettings = Gio.Settings.new("org.gnome.desktop.interface")
         self.gsettings.connect("changed", self.refresh_icons_view)
-        
+
         self.start()
 
     def emit(self, *args):
@@ -103,6 +103,7 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
                 self.search_entry.set_text("")
             else:
                 self.search_entry.grab_focus_without_selecting()
+            return True
 
         if keyname == "backspace":
             if (len(self.search_entry.get_text()) == 0
@@ -172,7 +173,8 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
             if path.isdir(desktop_dir):
                 all_files = glob("{0}*.desktop".format(desktop_dir))
                 for desktop_file in all_files:
-                    obj = DesktopFile(desktop_file, self.upload_service, supported_icons, issues_list)
+                    obj = DesktopFile(desktop_file, self.upload_service,
+                                      supported_icons, issues_list)
                     icon_name = obj.getIcon()
                     if icon_name not in already_added and icon_name not in ICONS_IGNORE_LIST:
                         self.db.append(obj)

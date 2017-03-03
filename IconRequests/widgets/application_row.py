@@ -45,6 +45,7 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
         description_label = Gtk.Label()
         description_label.set_justify(Gtk.Justification.LEFT)
         description_label.set_text(self.desktop_file.getComment())
+        description_label.set_tooltip_text(self.desktop_file.getComment())
         description_label.set_ellipsize(Pango.EllipsizeMode.END)
         description_label.get_style_context().add_class("application-label")
         label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -53,7 +54,9 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
 
         path_label = Gtk.Label()
         path_label.set_justify(Gtk.Justification.LEFT)
-        path_label.set_text(self.desktop_file.path)
+        file_path = path.join(self.desktop_file.path, self.desktop_file.desktop_file)
+        path_label.set_text(file_path)
+        path_label.set_tooltip_text(file_path)
         path_label.set_ellipsize(Pango.EllipsizeMode.END)
         path_label.get_style_context().add_class("application-path")
         path_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)

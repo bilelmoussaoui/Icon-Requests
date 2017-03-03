@@ -1,6 +1,6 @@
 # See https://github.com/mesonbuild/meson/issues/226
 project('icon-requests', 'c',
-	version: '0.1')
+	version: '0.1.1')
 
 
 python = find_program('python3')

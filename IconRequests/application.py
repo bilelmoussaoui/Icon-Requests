@@ -27,7 +27,7 @@ class Application(Gtk.Application):
 
         self.menu = Gio.Menu()
         cssProviderFile = Gio.File.new_for_uri(
-            'resource:///org/gnome/IconRequests/style.css')
+            'resource:///org/gnome/IconRequests/css/style.css')
         cssProvider = Gtk.CssProvider()
         screen = Gdk.Screen.get_default()
         styleContext = Gtk.StyleContext()
@@ -91,7 +91,7 @@ class Application(Gtk.Application):
             Shows about dialog
         """
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/gnome/IconRequests/about.ui')
+        builder.add_from_resource('/org/gnome/IconRequests/ui/about.ui')
 
         dialog = builder.get_object("AboutDialog")
         return dialog

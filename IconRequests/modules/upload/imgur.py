@@ -31,14 +31,11 @@ class Imgur(Upload):
                 "title": title
             }
             try:
-                query = requests.post(UPLOAD_URI, data, headers=headers, timeout=0.05)
+                query = requests.post(UPLOAD_URI, data, headers=headers)
                 if query.status_code == 200:
                     return query.json()["data"]["link"]
                 else:
                     raise ConnexionError
-                    return None
             except requests.exceptions.ConnectionError:
                 raise ConnexionError
-                return None
-        else:
-            return None
+        return None
