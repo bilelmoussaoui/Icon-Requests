@@ -9,7 +9,4 @@ before_install:
   - docker pull fedora:25
   
 script:
-- docker run --privileged -it fedora:25 /bin/sh -c "dnf -y install git python3-pip python3-cairosvg inkscape; pip3 install --upgrade pip; pip3 install meson ninja requests Pillow;"
-- docker run  -it fedora:25 /bin/sh -c "git clone https://github.com/bil-elmoussaoui/Icon-Requests; cd ./Icon-Requests; mkdir build; cd ./build; meson ..; ninja;"
-- docker run --privileged -it fedora:25 /bin/sh -c "ninja install"
-- docker run  -it fedora:25 /bin/sh -c "icon-requests"
+- docker run --privileged -it fedora:25 /bin/sh -c "dnf -y install git python3-pip python3-cairosvg inkscape; pip3 install --upgrade pip; pip3 install meson ninja requests Pillow;git clone https://github.com/bil-elmoussaoui/Icon-Requests; cd ./Icon-Requests; mkdir build; cd ./build; meson ..; ninja;ninja install; icon-requests"
