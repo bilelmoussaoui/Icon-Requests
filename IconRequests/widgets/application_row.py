@@ -11,6 +11,7 @@ from threading import Thread
 
 
 class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
+    stack_name = None
     __gsignals__ = {
         'icon_uploaded': (GObject.SignalFlags.RUN_LAST, None, (bool,))
     }
@@ -30,7 +31,11 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
         info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         image = Gtk.Image(xalign=0)
-        image.set_from_pixbuf(get_icon(self.desktop_file.icon_path))
+        icon = get_icon(self.desktop_file.icon_path)
+        if icon:
+            image.set_from_pixbuf(icon)
+        else:
+            image.set_from_icon_name("image-missing", Gtk.IconSize.DIALOG)
         image_box.pack_start(image, True, False, 6)
 
         name_label = Gtk.Label()

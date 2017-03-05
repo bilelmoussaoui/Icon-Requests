@@ -1,61 +1,20 @@
-{  
-   "repos":{  
-      "Paper":{  
-         "url":"https://github.com/snwh/paper-icon-theme",
-         "repo":"snwh/paper-icon-theme"
-      },
-      "Paper-Mono-Dark":{  
-         "url":"https://github.com/snwh/paper-icon-theme",
-         "repo":"snwh/paper-icon-theme"
-      },
-      "Numix-Circle":{  
-         "url":"https://github.com/numixproject/numix-core",
-         "repo":"numixproject/numix-core"
-      },
-      "Numix-Circle-Light":{  
-         "url":"https://github.com/numixproject/numix-core",
-         "repo":"numixproject/numix-core"
-      },
-      "Numix-Square":{  
-         "url":"https://github.com/numixproject/numix-core",
-         "repo":"numixproject/numix-core"
-      },
-      "Numix-Square-Light":{  
-         "url":"https://github.com/numixproject/numix-core",
-         "repo":"numixproject/numix-core"
-      },
-      "Papirus-Dark":{  
-         "url":"https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
-         "repo":"PapirusDevelopmentTeam/papirus-icon-theme"
-      },
-      "Papirus-Light":{  
-         "url":"https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
-         "repo":"PapirusDevelopmentTeam/papirus-icon-theme"
-      },
-      "Papirus":{  
-         "url":"https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
-         "repo":"PapirusDevelopmentTeam/papirus-icon-theme"
-      },
-      "ePapirus":{  
-         "url":"https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
-         "repo":"PapirusDevelopmentTeam/papirus-icon-theme"
-      },
-      "la-capitaine-icon-theme":{
-          "url": "https://github.com/keeferrourke/la-capitaine-icon-theme",
-          "repo": "keeferrourke/la-capitaine-icon-theme"
-      }
-   },
-   "reposlist":[  
-      "Paper",
-      "Paper-Mono-Dark",
-      "Numix-Circle",
-      "Numix-Circle-Light",
-      "Numix-Square",
-      "Numix-Square-Light",
-      "Papirus-Dark",
-      "Papirus-Light",
-      "Papirus",
-      "ePapirus",
-      "la-capitaine-icon-theme"
-   ]
+{
+    "Paper, Paper-Mono-Dark": {
+        "url": "https://github.com/snwh/paper-icon-theme"
+    },
+    "Numix-Circle, Numix-Circle-Light, Numix-Square, Numix-Square-Light": {
+        "url": "https://github.com/numixproject/numix-core"
+    },
+    "Papirus-Dark, Papirus-Light, Papirus, ePapirus": {
+        "url": "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme"
+    },
+    "la-capitaine-icon-theme": {
+        "url": "https://github.com/keeferrourke/la-capitaine-icon-theme"
+    },
+    "elementaryPlus": {
+        "url": "https://github.com/mank319/elementaryPlus"
+    },
+    "Oranchelo, Oranchelo-Green": {
+        "url": "https://github.com/OrancheloTeam/oranchelo-icon-theme"
+    }
 }

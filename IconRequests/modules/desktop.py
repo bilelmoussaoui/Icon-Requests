@@ -70,9 +70,8 @@ class DesktopFile(DesktopEntry):
         issue_url = None
         app_name = self.getName().lower()
         app_icon = self.getIcon()
-        if isinstance(self.issues_list[0], str):
+        if self.issues_list and isinstance(self.issues_list[0], str):
             raise APIRateLimit
-            return False
         else:
             for issue in self.issues_list:
                 title = issue.get("title", "").lower()
@@ -85,10 +84,9 @@ class DesktopFile(DesktopEntry):
                 return True
             else:
                 Gio.app_info_launch_default_for_uri(issue_url)
-                return False
+        return False
 
     def report(self):
-        # TODO : use glib instead of wewbbrowser
         theme = Gio.Settings.new(
             "org.gnome.desktop.interface").get_string("icon-theme")
         if repositories.is_supported(theme):

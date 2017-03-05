@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: icon-requests\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-03 01:21+0100\n"
+"POT-Creation-Date: 2017-03-05 19:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,24 +32,24 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: IconRequests/widgets/application_row.py:68
+#: IconRequests/widgets/application_row.py:76
 msgid "Report"
 msgstr ""
 
-#: IconRequests/widgets/application_row.py:81
+#: IconRequests/widgets/application_row.py:89
 msgid "Fix"
 msgstr ""
 
-#: IconRequests/widgets/application_row.py:124
+#: IconRequests/widgets/application_row.py:132
 msgid "Please check your connexion"
 msgstr ""
 
-#: IconRequests/widgets/application_row.py:128
-#: IconRequests/widgets/application_row.py:154
+#: IconRequests/widgets/application_row.py:136
+#: IconRequests/widgets/application_row.py:162
 msgid "Theme not supported"
 msgstr ""
 
-#: IconRequests/widgets/application_row.py:132
+#: IconRequests/widgets/application_row.py:140
 msgid "You've reached your API limits"
 msgstr ""
 

@@ -2,4 +2,4 @@
 | --- | :-- | :-- | :-- | :-- |
 | {app.name} | `{app.icon}` | `{app.desktop}` | ![{app.name}]({app.icon_url})| {theme} |
 
-This issue was automatically created using IconRequsts.
+This issue was automatically created using [IconRequests](https://github.com/bil-elmoussaoui/Icon-Requests).

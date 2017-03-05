@@ -50,6 +50,7 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
         self.all = self.builder.get_object("AllListBox")
         self.unsupported = self.builder.get_object("unsupportedListBox")
         self.hardcoded = self.builder.get_object("hardcodedListBox")
+
         self.window.set_application(application)
         self.window.connect("delete-event", lambda x, y: application.on_quit())
 
@@ -124,6 +125,7 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
             self.search_entry.set_text("")
             for search_list in self.search_list:
                 search_list.set_filter_func(lambda x, y, z: True, None, False)
+            self.main_stack.set_visible_child_name("applications")
         else:
             self.revealer.set_reveal_child(True)
             self.search_entry.grab_focus_without_selecting()
@@ -137,12 +139,14 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
         if len(data) > 0:
             return data in app_label.lower()
         else:
+            self.main_stack.set_visible_child_name("applications")
             return True
 
     def __filter_applications(self, entry):
         data = entry.get_text().strip()
         for search_list in self.search_list:
-            search_list.set_filter_func(self.filter_func, data, False)
+            stack = search_list.get_parent().get_parent().get_parent()
+            search_list.set_filter_func(self.filter_func, data, True)
 
     def show_menu_popover(self, *args):
         if self.popover:

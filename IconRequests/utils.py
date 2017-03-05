@@ -137,11 +137,13 @@ def get_icon(icon_path):
         :param image: icon name or image path
         :return: GdkPixbux Image
     """
-    icon = GdkPixbuf.Pixbuf.new_from_file(icon_path)
-    if icon.get_width() != 48 or icon.get_height() != 48:
-        icon = icon.scale_simple(48, 48, GdkPixbuf.InterpType.BILINEAR)
-    return icon
-
+    try:
+        icon = GdkPixbuf.Pixbuf.new_from_file(icon_path)
+        if icon.get_width() != 48 or icon.get_height() != 48:
+            icon = icon.scale_simple(48, 48, GdkPixbuf.InterpType.BILINEAR)
+        return icon
+    except GLib.Error:
+        return None
 
 def get_issues_list(repository):
     """
