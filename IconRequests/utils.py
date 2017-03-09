@@ -138,9 +138,12 @@ def get_icon(icon_path):
         :return: GdkPixbux Image
     """
     try:
-        icon = GdkPixbuf.Pixbuf.new_from_file(icon_path)
-        if icon.get_width() != 48 or icon.get_height() != 48:
-            icon = icon.scale_simple(48, 48, GdkPixbuf.InterpType.BILINEAR)
+        if "symbolic" in icon_path:
+            icon = (None, icon_path)
+        else:
+            icon = GdkPixbuf.Pixbuf.new_from_file(icon_path)
+            if icon.get_width() != 48 or icon.get_height() != 48:
+                icon = icon.scale_simple(48, 48, GdkPixbuf.InterpType.BILINEAR)
         return icon
     except GLib.Error:
         return None

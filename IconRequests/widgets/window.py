@@ -67,7 +67,9 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
             self.popover = Gtk.Popover.new_from_model(self.menu_button, application.menu)
             self.popover.props.width_request = 200
             self.menu_button.connect("clicked", self.show_menu_popover)
-
+        else:
+            self.menu_button.set_visible(False)
+            self.menu_button.set_no_show_all(True)
         self.revealer = self.builder.get_object("Revealer")
         self.search_list = [self.all, self.unsupported, self.hardcoded]
 

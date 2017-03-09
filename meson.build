@@ -1,8 +1,6 @@
-# See https://github.com/mesonbuild/meson/issues/226
-project('icon-requests', 'c',
-	version: '0.1.1')
+project('icon-requests', 'c', version: '0.1.2')
 
-
+message('Looking for dependencies')
 python = find_program('python3')
 git = find_program('git', required : false)
 intltool_merge = find_program('intltool-merge')
@@ -12,15 +10,13 @@ else
     GITVERSION = ''
 endif
 
-message('Looking for dependencies')
-py3 = find_program('python3')
 glib = dependency('glib-2.0')
 gobject = dependency('gobject-2.0')
 gir = dependency('gobject-introspection-1.0')
 gtk = dependency('gtk+-3.0', version : '>=3.16')
 
 message('Getting python install dir')
-r = run_command(py3, '-c', 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')
+r = run_command(python, '-c', 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')
 if r.returncode() != 0
     error('Cannot find python install dir')
 endif
@@ -40,6 +36,13 @@ conf.set('VERSION', meson.project_version())
 conf.set('BUILDDIR', meson.current_build_dir())
 conf.set('PYTHONDIR', python_dir)
 
+if get_option('post_install') == true
+	post_install = 'enabled'
+else
+	post_install = 'disabled'
+endif
+message('post install script is : ' + post_install)
+
 subdir('data')
 subdir('po')
 
@@ -52,4 +55,7 @@ configure_file(input : 'icon-requests.in', output : 'icon-requests', configurati
 
 configure_file = '@0@/icon-requests'.format(meson.current_build_dir())
 install_data(configure_file, install_dir: 'bin')
-meson.add_install_script('meson_post_install.sh')
+
+if get_option('post_install') == true
+    meson.add_install_script('meson_post_install.sh')
+endif

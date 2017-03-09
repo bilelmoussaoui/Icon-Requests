@@ -33,7 +33,12 @@ class ApplicationRow(Gtk.ListBoxRow, GObject.GObject):
         image = Gtk.Image(xalign=0)
         icon = get_icon(self.desktop_file.icon_path)
         if icon:
-            image.set_from_pixbuf(icon)
+            if type(icon) == tuple:
+                icon_name = path.basename(icon[1]).replace(".svg", "")
+                image.set_from_gicon(Gio.ThemedIcon(name=icon_name),
+                                     Gtk.IconSize.DIALOG)
+            else:
+                image.set_from_pixbuf(icon)
         else:
             image.set_from_icon_name("image-missing", Gtk.IconSize.DIALOG)
         image_box.pack_start(image, True, False, 6)
