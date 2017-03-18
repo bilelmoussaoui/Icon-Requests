@@ -54,7 +54,7 @@ message('Preparing init file')
 configure_file(input : 'icon-requests.in', output : 'icon-requests', configuration : conf)
 
 configure_file = '@0@/icon-requests'.format(meson.current_build_dir())
-install_data(configure_file, install_dir: 'bin')
+install_data(configure_file, install_dir: 'bin', install_mode: '+x')
 
 if get_option('post_install') == true
     meson.add_install_script('meson_post_install.sh')
