@@ -19,7 +19,7 @@ find ${BASEDIR}/ -name '*.ui' | xgettext \
   --join-existing \
   --files-from=- \
   --directory=$BASEDIR \
-  --language=ui \
+  --language=Glade \
   --foreign-user \
   --keyword=C_:1c,2 \
   --from-code=utf-8

@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application>
-    <id type="desktop">icon-requests.desktop</id>
+<component type="desktop">
+    <id>icon-requests.desktop</id>
     <licence>GPL3</licence>
     <_name>Icon Requests</_name>
-    <_summary>missing icons reporter</_summary>
+    <_summary>missing icons reporter</_summary> 
+    <screenshots>
+    <screenshot type="default">
+      <image type="source">https://raw.githubusercontent.com/bil-elmoussaoui/Icon-Requests/master/screenshots/screenshot1.png</image>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://raw.githubusercontent.com/bil-elmoussaoui/Icon-Requests/master/screenshots/screenshot2.png</image>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://raw.githubusercontent.com/bil-elmoussaoui/Icon-Requests/master/screenshots/screenshot3.png</image>
+    </screenshot>
+  </screenshots>
     <description>
         <_p>Simple application to report missing icons to github repository</_p>
     </description>
     <url type="homepage">https://github.com/bil-elmoussaoui/Icon-Requests</url>
+    <url type="bugtracker">https://github.com/bil-elmoussaoui/Icon-Requests</url>
     <updatecontact>bil.elmoussaoui@gmail.com</updatecontact>
-</application>
+    <translation type="gettext">icon-requests</translation>
+</component>

@@ -83,7 +83,6 @@ class Application(Gtk.Application):
         settings.set_is_night_mode(is_night_mode)
         Gtk.Settings.get_default().set_property(
             "gtk-application-prefer-dark-theme", is_night_mode)
-    
 
     @staticmethod
     def about_dialog():
@@ -95,6 +94,14 @@ class Application(Gtk.Application):
 
         dialog = builder.get_object("AboutDialog")
         return dialog
+
+    def __about_response(self, dialog, response_id):
+        """
+            Destroy about dialog when closed
+            @param dialog as Gtk.Dialog
+            @param response id as int
+        """
+        dialog.destroy()
 
     def on_about(self, *args):
         """

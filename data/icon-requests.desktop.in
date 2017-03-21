@@ -2,17 +2,16 @@
 Name=Icon Requests
 GenericName=Missing Icon Requests
 Comment=Report Missing icons to your current theme
-Type=Application
+Icon=icon-requests
 Exec=icon-requests
+Type=Application
 Terminal=false
 Categories=GNOME;GTK;
 Keywords=Gnome;GTK;Verification;
-Icon=icon-requests
 StartupNotify=true
 X-GNOME-Gettext-Domain=icon-requests
 StartupWMClass=icon-requests
 Actions=AboutDialog;
-
 
 [Desktop Action AboutDialog]
 Exec=icon-requests --about

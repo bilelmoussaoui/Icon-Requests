@@ -100,7 +100,8 @@ class Window(Gtk.ApplicationWindow, GObject.GObject):
 
     def __on_key_press(self, widget, event):
         keyname = Gdk.keyval_name(event.keyval).lower()
-        if keyname == 'escape' and self.search_button.get_active():
+        is_ready = self.main_stack.get_visible_child_name() != "loading"
+        if keyname == 'escape' and self.search_button.get_active() and is_ready:
             if self.search_entry.is_focus():
                 self.search_button.set_active(False)
                 self.search_entry.set_text("")

@@ -166,7 +166,7 @@ def get_issues_list(repository):
     for page in range(1, NB_PAGES + 1):
         url_data["page"] = str(page)
         try:
-            query = requests.get(base_uri + urlencode(url_data), timeout=0.05)
+            query = requests.get(base_uri + urlencode(url_data))
             issues_list.extend(query.json())
         except requests.exceptions.ConnectionError:
             issues_list = []
