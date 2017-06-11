@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-from IconRequests.widgets.window import Window
-from IconRequests.utils import is_gnome, is_app_menu
-from IconRequests.const import settings
 from gettext import gettext as _
-import logging
 from gi import require_version
 require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio, Gdk, GObject
+require_version("Gdk", "3.0")
+from gi.repository import Gdk, Gio, GLib, Gtk
+
+from IconRequests.modules.log import Logger
+from IconRequests.modules.settings import Settings
+from IconRequests.utils import is_app_menu, is_gnome
+from IconRequests.widgets.about import AboutDialog
+from IconRequests.widgets.window import Window
+
 
 
 class Application(Gtk.Application):
-    win_object = None
+    ALIVE = True
 
     def __init__(self):
         Gtk.Application.__init__(self,
@@ -21,103 +24,93 @@ class Application(Gtk.Application):
         GLib.set_application_name(_("Icon Requests"))
         GLib.set_prgname("Icon Requests")
 
-
+        self._load_css()
         Gtk.Settings.get_default().set_property(
-            "gtk-application-prefer-dark-theme", settings.get_is_night_mode())
+            "gtk-application-prefer-dark-theme",
+            Settings.get_default().night_mode
+        )
+        self._menu = Gio.Menu()
 
-        self.menu = Gio.Menu()
-        cssProviderFile = Gio.File.new_for_uri(
-            'resource:///org/gnome/IconRequests/css/style.css')
-        cssProvider = Gtk.CssProvider()
+    def _load_css(self):
+        css_file = 'resource:///org/gnome/IconRequests/css/style.css'
+        css_provider_file = Gio.File.new_for_uri(css_file)
+        css_provider = Gtk.CssProvider()
         screen = Gdk.Screen.get_default()
-        styleContext = Gtk.StyleContext()
-        try:
-            cssProvider.load_from_file(cssProviderFile)
-            styleContext.add_provider_for_screen(screen, cssProvider,
-                                                 Gtk.STYLE_PROVIDER_PRIORITY_USER)
-            logging.debug("Loading css file ")
-        except Exception as e:
-            logging.error("Error message %s" % str(e))
+        style_context = Gtk.StyleContext()
+        css_provider.load_from_file(css_provider_file)
+        style_context.add_provider_for_screen(screen, css_provider,
+                                              Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
-        self.generate_menu()
+        self._generate_menu()
+        self._generate_actions()
+        if is_gnome() and not is_app_menu():
+            self.set_app_menu(self._menu)
 
-    def generate_menu(self):
+    @property
+    def menu(self):
+        return self._menu
+
+    def _generate_menu(self):
         # Help section
         help_content = Gio.Menu.new()
-        help_content.append_item(Gio.MenuItem.new(_("Night Mode"), "app.night_mode"))
-        help_content.append_item(Gio.MenuItem.new(_("About"), "app.about"))
-        help_content.append_item(Gio.MenuItem.new(_("Quit"), "app.quit"))
+        help_content.append_item(Gio.MenuItem.new(_("Night Mode"),
+                                                  "app.night_mode"))
+        help_content.append_item(Gio.MenuItem.new(_("About"),
+                                                  "app.about"))
+        help_content.append_item(Gio.MenuItem.new(_("Quit"),
+                                                  "app.quit"))
         help_section = Gio.MenuItem.new_section(None, help_content)
-        self.menu.append_item(help_section)
+        self._menu.append_item(help_section)
 
-        action = Gio.SimpleAction.new_stateful("night_mode", None, GLib.Variant.new_boolean(settings.get_is_night_mode()))
-        action.connect("change-state", self.on_night_mode)
+    def _generate_actions(self):
+        night_mode = GLib.Variant.new_boolean(
+            Settings.get_default().night_mode)
+        action = Gio.SimpleAction.new_stateful("night_mode", None, night_mode)
+        action.connect("change-state", self._on_night_mode)
         self.add_action(action)
 
         action = Gio.SimpleAction.new("about", None)
-        action.connect("activate", self.on_about)
+        action.connect("activate", self._on_about)
         self.add_action(action)
 
         action = Gio.SimpleAction.new("quit", None)
-        action.connect("activate", self.on_quit)
+        action.connect("activate", self._on_quit)
         self.add_action(action)
 
-        if is_gnome() and not is_app_menu():
-            self.set_app_menu(self.menu)
-            logging.debug("Adding gnome shell menu")
-
     def do_activate(self, *args):
-        if not self.win_object:
-            self.win_object = Window(self)
-            self.win_object.show_window()
-            self.win = self.win_object.window
-            self.add_window(self.win)
-        else:
-            self.win_object.show_window()
-    
-    def on_night_mode(self, action, gvariant):
-        is_night_mode = not settings.get_is_night_mode()
+        window = Window.get_default()
+        window.set_application(self)
+        self.add_window(window)
+        window.show_all()
+
+    def _on_night_mode(self, action, gvariant):
+        settings = Settings.get_default()
+        is_night_mode = not settings.night_mode
         action.set_state(GLib.Variant.new_boolean(is_night_mode))
-        settings.set_is_night_mode(is_night_mode)
+        settings.night_mode = is_night_mode
         Gtk.Settings.get_default().set_property(
-            "gtk-application-prefer-dark-theme", is_night_mode)
+            "gtk-application-prefer-dark-theme",
+            is_night_mode
+        )
 
-    @staticmethod
-    def about_dialog():
+    def _on_about(self, *args):
         """
             Shows about dialog
         """
-        builder = Gtk.Builder()
-        builder.add_from_resource('/org/gnome/IconRequests/ui/about.ui')
-
-        dialog = builder.get_object("AboutDialog")
-        return dialog
-
-    def __about_response(self, dialog, response_id):
-        """
-            Destroy about dialog when closed
-            @param dialog as Gtk.Dialog
-            @param response id as int
-        """
-        dialog.destroy()
-
-    def on_about(self, *args):
-        """
-            Shows about dialog
-        """
-        dialog = Application.about_dialog()
-        dialog.set_transient_for(self.win)
+        dialog = AboutDialog()
+        dialog.set_transient_for(Window.get_default())
         dialog.run()
         dialog.destroy()
 
-    def on_quit(self, *args):
+    def _on_quit(self, *args):
         """
         Close the application, stops all threads
         and clear clipboard for safety reasons
         """
-        if self.win:
-            self.win_object.save_window_state()
-            self.win.destroy()
+        ALIVE = False
+        window = Window.get_default()
+        if window:
+            window.close()
         self.quit()

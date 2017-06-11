@@ -1,16 +1,22 @@
 import requests
 from IconRequests.modules.settings import Settings
-from IconRequests.modules.upload.upload import Upload, ConnexionError
+from IconRequests.modules.upload.upload import Upload
 from os import path
 from base64 import b64encode
 
 UPLOAD_URI = "https://api.imgur.com/3/upload"
 
 class Imgur(Upload):
-
-    def __init__(self, settings):
+    _instance = None
+    def __init__(self):
         super(Imgur, self).__init__()
-        self.client_id = settings.get_imgur_client_id()
+        self.client_id = Settings.get_default().imgur_client_id
+
+    @staticmethod
+    def get_default():
+        if Imgur._instance is None:
+            Imgur._instance = Imgur()
+        return Imgur._instance
 
     def upload_icon(self, image_path, title=None):
         if path.isfile(image_path):
@@ -34,8 +40,6 @@ class Imgur(Upload):
                 query = requests.post(UPLOAD_URI, data, headers=headers)
                 if query.status_code == 200:
                     return query.json()["data"]["link"]
-                else:
-                    raise ConnexionError
             except requests.exceptions.ConnectionError:
-                raise ConnexionError
+                pass
         return None

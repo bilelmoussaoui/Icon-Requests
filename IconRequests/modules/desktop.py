@@ -1,4 +1,3 @@
-from IconRequests.const import repositories
 from xdg.DesktopEntry import DesktopEntry
 from os import path, listdir
 from json import loads
@@ -6,137 +5,127 @@ from gi import require_version
 require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, GLib
 
+from IconRequests.modules.upload.imgur import Imgur
+from IconRequests.modules.repos import Repositories
+from IconRequests.modules.theme import Theme
+from IconRequests.utils import load_from_resource
+
 
 class DesktopFile(DesktopEntry):
 
-    def __init__(self, _file, upload_service, supported_icons, issues_list):
+    def __init__(self, _file):
         if not path.exists(_file):
             raise DesktopFileNotFound
         DesktopEntry.__init__(self, filename=_file)
-        self.issues_list = issues_list
-        self.upload_service = upload_service
-        self.desktop_file = path.basename(_file)
-        self.supported_icons = supported_icons
-        self.path = _file.replace(self.desktop_file, "")
-        self.issue_url = None
-        self.get_icon_informations()
+        self._desktop_file = path.basename(_file)
+        self._path = _file.replace(self._desktop_file, "")
+        self._issue_url = None
+        self._theme = Theme()
+        self._parse_desktop_file()
 
-    def get_is_supported(self):
-        extensions = [".svg", ".png", ".xpm"]
-        icon_name = path.basename(self.getIcon())
-        for ext in extensions:
-            icon_name = icon_name.replace(ext, "")
-        return icon_name in self.supported_icons
+    @property
+    def path(self):
+        return self._path
 
-    def get_icon_informations(self):
-        theme = Gtk.IconTheme.get_default()
-        self.is_hardcoded_icon()
-        self.icon_path = ""
-        icon_name = self.getIcon()
-        self.is_supported = self.get_is_supported()
+    @property
+    def desktop_file(self):
+        return self._desktop_file
+
+    @property
+    def icon_path(self):
+        return self._icon_path
+
+    @property
+    def is_hardcoded(self):
+        return self._is_hardcoded
+
+    @property
+    def is_supported(self):
+        return self._is_supported
+
+    def _parse_desktop_file(self):
+        self._is_hardcoded = self.__is_hardcoded()
+        self._is_supported = self._theme.has_icon(self.getIcon())
+        self._get_icon_path()
+
+    def _get_icon_path(self):
         self.supported_icons = None
         full_path = False
-        if self.is_hardcoded:
-            self.icon_path = icon_name
-            if len(self.icon_path.split("/")) == 1:
+        icon_name = self.getIcon()
+        self._icon_path = None
+        if self._is_hardcoded:
+            self._icon_path = icon_name
+            if len(self._icon_path.split("/")) == 1:
                 icon_name = path.splitext(self.getIcon())[0]
             else:
-                self.icon_path = self.getIcon()
+                self._icon_path = self.getIcon()
                 full_path = True
 
-        icon = theme.lookup_icon(icon_name, 48, 0)
+        icon = self._theme.lookup_icon(icon_name, 48, 0)
         if icon and not full_path:
-            self.icon_path = icon.get_filename()
-            if self.is_hardcoded:
-                self.is_supported = True
+            self._icon_path = icon.get_filename()
+            if self._is_hardcoded:
+                self._is_supported = True
 
-        if not self.icon_path or not path.exists(self.icon_path):
-            icon = theme.lookup_icon(
-                "image-missing", 48, 0)
+        if not self._icon_path or not path.exists(self._icon_path):
+            icon = self._theme.lookup_icon("image-missing", 48, 0)
             if icon:
-                self.icon_path = icon.get_filename()
+                self._icon_path = icon.get_filename()
 
-    def is_hardcoded_icon(self):
+    def __is_hardcoded(self):
         img_exts = ["png", "svg", "xpm"]
         icon_path = self.getIcon().split("/")
         ext = path.splitext(self.getIcon())[1].strip(".")
         is_hardcoded = False
         if ext.lower() in img_exts or len(icon_path) > 1:
             is_hardcoded = True
-        self.is_hardcoded = is_hardcoded
+        return is_hardcoded
 
     def upload(self):
         """ Upload the missing icon to the current image service"""
-        issue_url = None
         app_name = self.getName().lower()
         app_icon = self.getIcon()
-        if self.issues_list and isinstance(self.issues_list[0], str):
-            raise APIRateLimit
-        else:
-            for issue in self.issues_list:
-                title = issue.get("title", "").lower()
-                body = issue.get("body", "")
-                if app_icon in body or app_name in title:
-                    issue_url = issue["html_url"]
-                    break
-            if not issue_url:
-                self.icon_url = self.upload_service.upload(self.icon_path, self.getName())
-                return True
-            else:
-                Gio.app_info_launch_default_for_uri(issue_url)
+        issue_url = Repositories.get_default(
+            self._theme.name).has_issue(app_name, app_icon)
+        if not issue_url:
+            self._icon_url = Imgur.get_default().upload(self.icon_path, self.getName())
+            return True
+
+        Gio.app_info_launch_default_for_uri(issue_url)
         return False
 
+    def report_hardcoded(self):
+        repo_url = "https://github.com/Foggalong/hardcode-fixer"
+        issue_title = self.getName()
+        issue_model = load_from_resource("hardcode-fixer-issue.model")
+        data = {
+            "{app.name}": self.getName(),
+            "{app.icon}": self.getIcon(),
+            "{app.desktop}": self.desktop_file,
+            "\n": "%0A"
+        }
+        for key, value in data.items():
+            issue_model = issue_model.replace(key, value)
+        url = "%s/issues/new?title=%s&body=%s" % (
+            repo_url, issue_title, issue_model)
+        Gio.app_info_launch_default_for_uri(url)
+
     def report(self):
-        theme = Gio.Settings.new(
-            "org.gnome.desktop.interface").get_string("icon-theme")
-        if repositories.is_supported(theme):
-            issue_model_obj = Gio.File.new_for_uri(
-                'resource:///org/gnome/IconRequests/issue.model')
-            issue_model = str(issue_model_obj.load_contents(None)[1].decode("utf-8"))
-            repo_url = repositories.get_url(theme)
-            issue_title = "Icon Request : %s" % self.getName()
-            issue_model = issue_model.replace(
-                "{app.name}", self.getName())
-            issue_model = issue_model.replace(
-                "{app.icon}", self.getIcon())
-            issue_model = issue_model.replace(
-                "{app.icon_url}", self.icon_url)
-            issue_model = issue_model.replace(
-                "{app.desktop}", self.desktop_file)
-            issue_model = issue_model.replace("{theme}", theme)
-            issue_model = issue_model.replace("\n", "%0A")
+        repos = Repositories.get_default(self._theme.name)
+        if repos.is_supported():
+            issue_model = load_from_resource("issue.model")
+            issue_title = "Icon Request: {}".format(self.getName())
+            repo_url = repos.get_url()
+            data = {
+                "{app.name}": self.getName(),
+                "{app.icon}": self.getIcon(),
+                "{app.icon_url}": self._icon_url,
+                "{app.desktop}": self.desktop_file,
+                "{theme}": self._theme.name,
+                "\n": "%0A"
+            }
+            for key, value in data.items():
+                issue_model = issue_model.replace(key, value)
             url = "%s/issues/new?title=%s&body=%s" % (
                 repo_url, issue_title, issue_model)
             Gio.app_info_launch_default_for_uri(url)
-        else:
-            raise ThemeNotSupported
-
-
-class APIRateLimit(Exception):
-
-    def __init__(self):
-        super(APIRateLimit, self).__init__()
-
-
-class ThemeNotSupported(Exception):
-
-    def __init__(self):
-        super(ThemeNotSupported, self).__init__()
-
-
-class DesktopFileNotFound(Exception):
-
-    def __init__(self):
-        super(DesktopFileNotFound, self).__init__()
-
-
-class DesktopFileCorrupted(Exception):
-
-    def __init__(self):
-        super(DesktopFileCorrupted, self).__init__()
-
-
-class DesktopFileInvalid(Exception):
-
-    def __init__(self):
-        super(DesktopFileInvalid, self).__init__()

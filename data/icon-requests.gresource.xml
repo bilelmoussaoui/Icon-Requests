@@ -3,8 +3,7 @@
   <gresource prefix="/org/gnome/IconRequests">
     <file>css/style.css</file>
     <file>repos.json</file>
-    <file>issue.model</file>
-    <file preprocess="xml-stripblanks">ui/about.ui</file>
-    <file preprocess="xml-stripblanks">ui/mainwindow.ui</file>
+    <file>issue.model</file>    
+    <file>hardcode-fixer-issue.model</file>
   </gresource>
 </gresources>

@@ -1,0 +1,5 @@
+| Application name | Icon name | Desktop file name |
+| --- | :-- | :-- |
+| {app.name} | `{app.icon}` | `{app.desktop}` |
+
+This issue was automatically created using [IconRequests](https://github.com/bil-elmoussaoui/Icon-Requests).

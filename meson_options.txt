@@ -1,1 +1,0 @@
-option('post_install', type : 'boolean', value : 'true')
