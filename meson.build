@@ -3,7 +3,6 @@ project(
   version: '0.1.2'
 )
 
-
 message('Looking for dependencies')
 python = find_program('python3')
 glib = dependency('glib-2.0')
@@ -17,25 +16,24 @@ if r.returncode() != 0
     error('Cannot find python install dir')
 endif
 python_dir = r.stdout().strip()
+data_dir = join_paths(get_option('prefix'), get_option('datadir'))
+
 
 # Configuration params
 conf = configuration_data()
-conf.set('PACKAGE_URL', 'https://github.com/bil-elmoussaoui/Icon-Requests')
-conf.set('LIBDIR', join_paths(get_option('prefix'), get_option('libdir')))
-conf.set('DATADIR', join_paths(get_option('prefix'), get_option('datadir'), 'IconRequests/'))
-conf.set('LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale/'))
-conf.set('PACKAGE_NAME', 'Icon Requests')
-conf.set('PACKAGE', 'icon-requests')
-conf.set('VERSION', meson.project_version())
-conf.set('BUILDDIR', meson.current_build_dir())
-conf.set('PYTHONDIR', python_dir)
+conf.set('DATA_DIR', join_paths(data_dir, 'IconRequests'))
+conf.set('LOCALE_DIR', join_paths(data_dir, 'locale'))
+conf.set('PYTHON_DIR', python_dir)
 
 subdir('data')
 subdir('po')
 
+run_command(python, '-m', 'compileall', join_paths(meson.current_source_dir(), 'IconRequests'))
 
-run_command(python, '-m', 'compileall', meson.current_source_dir() + '/IconRequests')
-install_subdir('IconRequests', install_dir: python_dir)
+install_subdir(
+  'IconRequests',
+  install_dir: python_dir
+)
 
 message('Preparing init file')
 configure_file(
