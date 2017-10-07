@@ -8,7 +8,7 @@ import faulthandler
 from os import path
 from gi.repository import Gio
 sys.path.insert(1, '@PYTHON_DIR@')
-from IconRequests.application import Application
+from IconRequests import Application
 
 if __name__ == "__main__":
     locale.bindtextdomain('icon-requests', "@LOCALE_DIR@")
@@ -17,7 +17,7 @@ if __name__ == "__main__":
     gettext.textdomain('icon-requests')
 
     resource = Gio.resource_load(path.join('@DATA_DIR@',
-                                           'icon-requests.gresource'))
+                                           'com.github.bilelmoussaoui.IconRequests.gresource'))
     Gio.Resource._register(resource)
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)

@@ -3,7 +3,7 @@ require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 
-from IconRequests.widgets.applications.row import ApplicationRow
+from .row import ApplicationRow
 
 class ApplicationsList(Gtk.ScrolledWindow):
 

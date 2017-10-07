@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/IconRequests">
+  <gresource prefix="/com/github/bilelmoussaoui/IconRequests/">
     <file>css/style.css</file>
     <file>repos.json</file>
     <file>issue.model</file>    

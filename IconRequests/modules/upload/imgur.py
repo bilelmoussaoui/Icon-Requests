@@ -1,13 +1,16 @@
-import requests
-from IconRequests.modules.settings import Settings
-from IconRequests.modules.upload.upload import Upload
-from os import path
 from base64 import b64encode
+from os import path
+import requests
+
+from IconRequests.modules.settings import Settings
+from .upload import Upload
 
 UPLOAD_URI = "https://api.imgur.com/3/upload"
 
+
 class Imgur(Upload):
     _instance = None
+
     def __init__(self):
         super(Imgur, self).__init__()
         self.client_id = Settings.get_default().imgur_client_id

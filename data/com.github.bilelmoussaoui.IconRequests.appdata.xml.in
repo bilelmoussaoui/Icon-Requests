@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-    <id>icon-requests.desktop</id>
+    <id>com.github.bilelmoussaoui.IconRequests.desktop</id>
     <licence>GPL3</licence>
     <name>Icon Requests</name>
     <summary>missing icons reporter</summary> 

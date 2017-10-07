@@ -1,20 +1,19 @@
 import logging
 import sys
 
+
 class Logger:
-    """
-    Logger clas
-    """
+    """Logger class"""
     FORMAT = "[%(levelname)-s] %(asctime)s %(message)s"
     DATE = "%Y-%m-%d %H:%M:%S"
-    _log = None
-    APP = "com.git.bil-elmoussaoui.iconRequests"
+    # Logger instance
+    instance = None
 
     @staticmethod
     def get_default():
         """Return default instance of Logger."""
-        if Logger._log is None:
-            logger = logging.getLogger(Logger.APP)
+        if Logger.instance is None:
+            logger = logging.getLogger("com.github.bilelmoussaoui.IconRequests")
 
             handler = logging.StreamHandler(sys.stdout)
             formater = logging.Formatter(Logger.FORMAT, Logger.DATE)
@@ -22,8 +21,8 @@ class Logger:
             logger.addHandler(handler)
             logger.setLevel(logging.DEBUG)
 
-            Logger._log = logging.getLogger(Logger.APP)
-        return Logger._log
+            Logger.instance = logging.getLogger("com.github.bilelmoussaoui.IconRequests")
+        return Logger.instance
 
     @staticmethod
     def warning(msg):

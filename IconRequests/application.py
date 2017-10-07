@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from gettext import gettext as _
+
+
+from .modules import Logger, Settings
+
+from .utils import is_app_menu, is_gnome
+from .widgets import AboutDialog, Window
+
 from gi import require_version
 require_version("Gtk", "3.0")
 require_version("Gdk", "3.0")
 from gi.repository import Gdk, Gio, GLib, Gtk
 
-from IconRequests.modules.log import Logger
-from IconRequests.modules.settings import Settings
-from IconRequests.utils import is_app_menu, is_gnome
-from IconRequests.widgets.about import AboutDialog
-from IconRequests.widgets.window import Window
 
 
 
@@ -19,27 +21,28 @@ class Application(Gtk.Application):
 
     def __init__(self):
         Gtk.Application.__init__(self,
-                                 application_id="org.gnome.IconRequests",
+                                 application_id="com.github.bilelmoussaoui.IconRequests",
                                  flags=Gio.ApplicationFlags.FLAGS_NONE)
         GLib.set_application_name(_("Icon Requests"))
         GLib.set_prgname("Icon Requests")
 
         self._load_css()
-        Gtk.Settings.get_default().set_property(
-            "gtk-application-prefer-dark-theme",
-            Settings.get_default().night_mode
-        )
+        gtk_settings = Gtk.Settings.get_default()
+        gtk_settings.props.gtk_application_prefer_dark_theme = Settings.get_default().night_mode
         self._menu = Gio.Menu()
 
     def _load_css(self):
-        css_file = 'resource:///org/gnome/IconRequests/css/style.css'
+        css_file = 'resource:///com/github/bilelmoussaoui/IconRequests/css/style.css'
         css_provider_file = Gio.File.new_for_uri(css_file)
         css_provider = Gtk.CssProvider()
         screen = Gdk.Screen.get_default()
         style_context = Gtk.StyleContext()
-        css_provider.load_from_file(css_provider_file)
-        style_context.add_provider_for_screen(screen, css_provider,
+        try:
+            css_provider.load_from_file(css_provider_file)
+            style_context.add_provider_for_screen(screen, css_provider,
                                               Gtk.STYLE_PROVIDER_PRIORITY_USER)
+        except GLib.Error as error:
+            Logger.error(error)
 
     def do_startup(self):
         Gtk.Application.do_startup(self)

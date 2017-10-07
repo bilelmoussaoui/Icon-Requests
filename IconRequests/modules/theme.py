@@ -2,21 +2,28 @@ from glob import glob
 from os import path
 from gi import require_version
 require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk
 
 from IconRequests.const import ICONS_DIRS
 
 
 class Theme(Gtk.IconTheme):
     """Easy way to create new themes based on the theme name."""
+    instance = None
 
-    def __init__(self, theme_name=None):
-        if theme_name is None:
-            theme_name = Gio.Settings.new("org.gnome.desktop.interface").get_string("icon-theme")
+    def __init__(self, theme_name):
         self._name = theme_name
         Gtk.IconTheme.__init__(self)
         self.set_custom_theme(self.name)
         self._get_supported_icons()
+
+    @staticmethod
+    def get_default():
+        """Return the default theme."""
+        if Theme.instance is None:
+            theme_name = Gtk.Settings.get_default().props.gtk_icon_theme_name
+            Theme.instance = Theme(theme_name)
+        return Theme.instance
 
     @property
     def name(self):

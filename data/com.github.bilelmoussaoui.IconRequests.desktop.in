@@ -2,14 +2,14 @@
 Name=Icon Requests
 GenericName=Missing Icon Requests
 Comment=Report Missing icons to your current theme
-Icon=icon-requests
+Icon=com.github.bilelmoussaoui.IconRequests
 Exec=icon-requests
 Type=Application
 Terminal=false
 Categories=GNOME;GTK;
 Keywords=Gnome;GTK;Verification;
 StartupNotify=true
-X-GNOME-Gettext-Domain=icon-requests
+X-GNOME-Gettext-Domain=IconRequests
 StartupWMClass=icon-requests
 Actions=AboutDialog;
 

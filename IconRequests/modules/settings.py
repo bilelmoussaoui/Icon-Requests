@@ -7,7 +7,7 @@ class Settings(Gio.Settings):
         Gio.Settings.__init__(self)
 
     def new():
-        gsettings = Gio.Settings.new("org.gnome.IconRequests")
+        gsettings = Gio.Settings.new("com.github.bilelmoussaoui.IconRequests")
         gsettings.__class__ = Settings
         return gsettings
 

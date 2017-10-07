@@ -70,7 +70,7 @@ def get_icon(icon_path):
 
 
 def load_from_resource(filename):
-    filename = "resource:///org/gnome/IconRequests/" + filename
+    filename = "resource:///com/github/bilelmoussaoui/IconRequests/" + filename
     obj = Gio.File.new_for_uri(filename)
     content = str(obj.load_contents(None)[1].decode("utf-8"))
     return content

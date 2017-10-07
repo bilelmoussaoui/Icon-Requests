@@ -29,16 +29,21 @@ class Repositories:
             Repositories._instance = Repositories(theme)
         return Repositories._instance
 
+    @property 
     def is_supported(self):
         return self._theme in self._supported_themes
 
     def get_repo(self):
         url = self.get_url()
-        return urlsplit(url).path.strip("/")
+        if url:
+            return urlsplit(url).path.strip("/")
+        return None
 
     def get_url(self):
         key = self._get_key()
-        return self._repositories[key]["url"]
+        if key:
+            return self._repositories[key]["url"]
+        return None
 
     def has_issue(self, app_name, app_icon):
         for issue in self.issues:
@@ -51,7 +56,7 @@ class Repositories:
 
     @property
     def issues(self):
-        if self._issues is None:
+        if self._issues is None and self.is_supported:
             self._issues = self._get_issues()
         return self._issues
 
@@ -61,10 +66,9 @@ class Repositories:
                                "IconRequests",
                                "{}.json".format(repo.replace("/", "-"))
                                )
-        cache_dir = path.basename(cache_file)
+        cache_dir = path.dirname(cache_file)
         # Create cache directory
-        if not path.exists(cache_dir):
-            makedirs(cache_dir)
+        makedirs(cache_dir, exist_ok=True)
 
         issues_list = []
         url_data = {

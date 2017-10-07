@@ -20,7 +20,7 @@ class DesktopFile(DesktopEntry):
         self._desktop_file = path.basename(_file)
         self._path = _file.replace(self._desktop_file, "")
         self._issue_url = None
-        self._theme = Theme()
+        self._theme = Theme.get_default()
         self._parse_desktop_file()
 
     @property
@@ -112,7 +112,7 @@ class DesktopFile(DesktopEntry):
 
     def report(self):
         repos = Repositories.get_default(self._theme.name)
-        if repos.is_supported():
+        if repos.is_supported:
             issue_model = load_from_resource("issue.model")
             issue_title = "Icon Request: {}".format(self.getName())
             repo_url = repos.get_url()

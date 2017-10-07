@@ -1,22 +1,25 @@
 project(
   'icon-requests',
-  version: '0.1.2'
+  version: '0.1.2',
+  license: 'GPL-3.0',
+  default_options: ['prefix=/usr']
 )
 
+python = import('python3')
+
 message('Looking for dependencies')
-python = find_program('python3')
 glib = dependency('glib-2.0')
 gobject = dependency('gobject-2.0')
 gir = dependency('gobject-introspection-1.0')
 gtk = dependency('gtk+-3.0', version : '>=3.16')
 
-message('Getting python install dir')
-r = run_command(python, '-c', 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')
-if r.returncode() != 0
-    error('Cannot find python install dir')
+if not python.find_python().found()
+	error('Couldnt find an executable python')
 endif
-python_dir = r.stdout().strip()
+
+
 data_dir = join_paths(get_option('prefix'), get_option('datadir'))
+python_dir = join_paths(get_option('prefix'), python.sysconfig_path('purelib'))
 
 
 # Configuration params
@@ -27,8 +30,6 @@ conf.set('PYTHON_DIR', python_dir)
 
 subdir('data')
 subdir('po')
-
-run_command(python, '-m', 'compileall', join_paths(meson.current_source_dir(), 'IconRequests'))
 
 install_subdir(
   'IconRequests',
