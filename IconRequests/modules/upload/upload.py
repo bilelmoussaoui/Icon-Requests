@@ -36,10 +36,15 @@ class Upload:
     def upload(self, icon_path, app_name=None):
         icon_extension = path.splitext(icon_path)[1].lower().strip(".")
         was_scaled = False
-        if icon_extension in ["svg", "png"]:
+        if icon_extension in ["svg", "png", "xpm"]:
             outfile = NamedTemporaryFile().name
             if icon_extension == "svg":
                 convert_svg2png(icon_path, outfile, 48, 48)
+                icon_path = outfile
+                was_scaled = True
+                icon_extension = "png"
+            if icon_extension == "xpm":
+                convert_xpm2png(icon_path, outfile, 48, 48)
                 icon_path = outfile
                 was_scaled = True
                 icon_extension = "png"
@@ -51,6 +56,15 @@ class Upload:
             return icon_url
         return None
 
+def convert_xpm2png(infile, outfile, w, h):
+    """
+        Converts svg files to png using Cairosvg or Inkscape
+        @file_path : String; the svg file absolute path
+        @dest_path : String; the png file absolute path
+    """
+    output = Popen(["inkscape", "-z", "-f", infile, "-e", outfile,
+            "-w", str(w), "-h", str(h)],
+            stdout=PIPE, stderr=PIPE).communicate()
 
 def convert_svg2png(infile, outfile, w, h):
     """
