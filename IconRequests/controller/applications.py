@@ -4,7 +4,7 @@ from glob import glob
 from IconRequests.const import DESKTOP_FILE_DIRS
 from IconRequests.modules.desktop import DesktopFile
 from IconRequests.widgets.applications.list import ApplicationsList
-
+import xdg
 
 class ApplicationsController(GObject.GObject):
     __gsignals__ = {
@@ -34,12 +34,15 @@ class ApplicationsController(GObject.GObject):
         for desktop_dir in DESKTOP_FILE_DIRS:
             files = glob("{}*.desktop".format(desktop_dir))
             for desktop_file in files:
-                obj = DesktopFile(desktop_file)
-                icon_name = obj.getIcon()
-                self.emit("parse", obj.getName())
-                if icon_name not in already_added:
-                    database.append(obj)
-                    already_added.append(icon_name)
+                try:
+                    obj = DesktopFile(desktop_file)
+                    icon_name = obj.getIcon()
+                    self.emit("parse", obj.getName())
+                    if icon_name not in already_added:
+                        database.append(obj)
+                        already_added.append(icon_name)
+                except xdg.Exceptions.ParsingError:
+                    pass
         database = sorted(database, key=lambda x: x.getName().lower())
         self._db = database
         self.emit("loaded")
