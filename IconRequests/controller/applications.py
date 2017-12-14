@@ -8,9 +8,9 @@ import xdg
 
 class ApplicationsController(GObject.GObject):
     __gsignals__ = {
-        'loaded': (GObject.SIGNAL_RUN_LAST, None, ()),
-        'reload': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        "parse": (GObject.SIGNAL_RUN_FIRST, None, (str,)),
+        'loaded': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'reload': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "parse": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
 
     def __init__(self):
